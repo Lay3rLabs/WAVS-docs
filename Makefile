@@ -1,4 +1,4 @@
-## latest-docs: Pulls the latest docs from upstream
+## latest-docs: Pulls the latest docs from upstream | make latest-docs COMMIT=<COMMIT_SHA>
 .PHONY: latest-docs
 latest-docs:
 	@python3 ./scripts/sync_latest_docs.py $(COMMIT)

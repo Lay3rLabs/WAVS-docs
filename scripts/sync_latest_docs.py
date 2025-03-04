@@ -79,16 +79,16 @@ def copy_files(source_dir, destination_dir):
 # <!--import { Callout } from 'fumadocs-ui/components/callout';--> becomes import { Callout } from 'fumadocs-ui/components/callout';
 def check_if_commented_import_line(fileContent) -> str:
     lines = fileContent.split('\n')
+    new_lines = []
+
     for i, line in enumerate(lines):
-        # does not account for multi line imports, out of scope for now.
-        if '<!--' in line and 'import' in line:
-            lines[i] = line.replace('<!--', '').replace('-->', '')
+        # if '<!--docsignore' in line or 'docsignore-->' in line:
+        if any(x in line for x in ['<!--docsignore', '<!--ignoredocs', 'docsignore-->', 'ignoredocs-->']):
+            continue
 
-        # if line contains <!--docsignore or docsignore--> , remove the line
-        if '<!--docsignore' in line or 'docsignore-->' in line:
-            lines[i] = ''
+        new_lines.append(line)
 
-    return '\n'.join(lines)
+    return '\n'.join(new_lines)
 
 
 def __checkout_commit(repo_path, commit=None):
