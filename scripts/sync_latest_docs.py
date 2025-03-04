@@ -18,8 +18,8 @@ def main():
     commit = download_repo(URL, 'f8f39d2953911da5e9a6b30da9a1eec6b0f0887e') # https://github.com/Lay3rLabs/wavs-foundry-template/commits/reece/docs-sync/
     print(f"Downloaded wavsfoundry at commit {commit}") # useful for save caching later if no changes were made upstream (when pulling latest)
 
-    DEST = os.path.join(parent_dir, './content/docs')
-    SRC = os.path.join(parent_dir, 'dsource-wavs-foundry-template/docs')
+    DEST = os.path.join(parent_dir, 'content', 'docs')
+    SRC = os.path.join(parent_dir, 'dsource-wavs-foundry-template', 'docs')
     copy_files(SRC, DEST)
 
     # save commit to a file for caching in the parent dir
@@ -47,15 +47,26 @@ def copy_files(source_dir, destination_dir):
             file_content = open(returnPath, 'r').read()
             new_content = check_if_commented_import_line(file_content)
 
-            # save new_content to destination path file
-            os.remove(returnPath) # TODO: or just write over it?
             with open(returnPath, 'w') as f:
+                print(f"Writing to {returnPath}")
                 f.write(new_content)
 
             print(f"Copied: {item}")
         # If it's a directory, you might want to copy it recursively
         elif os.path.isdir(source_path):
-            shutil.copytree(source_path, destination_path, dirs_exist_ok=True)
+            returnPath = shutil.copytree(source_path, destination_path, dirs_exist_ok=True)
+
+            # iterate over all files and check if commented import line
+            for root, dirs, files in os.walk(returnPath):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    file_content = open(file_path, 'r').read()
+                    new_content = check_if_commented_import_line(file_content)
+
+                    with open(file_path, 'w') as f:
+                        print(f"Writing to {file_path}")
+                        f.write(new_content)
+
             print(f"Copied directory: {item}")
 
 
