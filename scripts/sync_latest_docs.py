@@ -15,7 +15,7 @@ parent_dir = os.path.dirname(current_dir)
 URL = "https://github.com/Lay3rLabs/wavs-foundry-template.git"
 
 def main():
-    commit = download_repo(URL, 'f8f39d2953911da5e9a6b30da9a1eec6b0f0887e') # https://github.com/Lay3rLabs/wavs-foundry-template/commits/reece/docs-sync/
+    commit = download_repo(URL, '4613d9335df44df0d352b52b8355e829703e538b') # https://github.com/Lay3rLabs/wavs-foundry-template/commits/reece/docs-sync/
     print(f"Downloaded wavsfoundry at commit {commit}") # useful for save caching later if no changes were made upstream (when pulling latest)
 
     DEST = os.path.join(parent_dir, 'content', 'docs')
