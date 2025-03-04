@@ -1,5 +1,3 @@
-
-
 ## latest-docs: Pulls the latest docs from upstream
 .PHONY: latest-docs
 latest-docs:

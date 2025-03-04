@@ -8,8 +8,8 @@ on:
             required: true
             default: 'main'
             type: string
-    # schedule:
-    #   - cron: "0 12 */2 * *"  # noon every other day
+    schedule:
+      - cron: "0 12 */3 * *"  # noon every other day
 
 permissions:
   contents: write

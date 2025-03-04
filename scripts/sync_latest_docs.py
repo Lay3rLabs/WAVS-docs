@@ -37,7 +37,6 @@ def copy_files(source_dir, destination_dir):
     if not os.path.exists(destination_dir):
         os.makedirs(destination_dir)
 
-    # Get all items in the source directory
     items = os.listdir(source_dir)
 
     # Copy each file
@@ -57,7 +56,7 @@ def copy_files(source_dir, destination_dir):
                 f.write(new_content)
 
             print(f"Copied: {item}")
-        # If it's a directory, you might want to copy it recursively
+        # If it's a directory, copy it & walk to replace content
         elif os.path.isdir(source_path):
             returnPath = shutil.copytree(source_path, destination_path, dirs_exist_ok=True)
 
