@@ -1,0 +1,56 @@
+name: Sync Latest Docs
+
+on:
+    workflow_dispatch:
+        inputs:
+          commit:
+            description: 'Commit SHA to sync from'
+            required: true
+            default: 'main'
+            type: string
+    schedule:
+      - cron: "0 12 */3 * *"  # noon every so often
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  BRANCH: "sync-${{ github.sha }}"
+
+jobs:
+  # This job just grabs the latest commits (if any) and creates a PR with the changes
+  # if there are no changes, no PR
+  # Another action will handle the PR verification for builds
+  file-sync:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+
+            # https://github.com/orgs/community/discussions/55906#discussioncomment-5946239
+            # https://github.com/settings/personal-access-tokens/new
+            # To verify the PR, we must set a PAT token in the secrets
+        - name: Check for PAT
+          run: |
+            if [ -z "${{ secrets.GIT_WORKFLOW_PAT }}" ]; then
+                echo "Please set the GIT_WORKFLOW_PAT secret to support PR workflow runs on generate"
+                exit 1
+            fi
+
+        - name: grab latest documentation files
+          run: make latest-docs
+
+        # exits if there are no changes
+        - uses: peter-evans/create-pull-request@v7.0.5
+          with:
+            base: main
+            branch: ${{ env.BRANCH }}
+            title: "chore: update upstream docs"
+            commit-message: "chore: sync latest"
+            delete-branch: true
+            signoff: false
+            token: ${{ secrets.GIT_WORKFLOW_PAT }}
+            labels: |
+                automated pr
+            body: |
+                Syncing the latest file commits from upstream.

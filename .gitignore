@@ -29,3 +29,6 @@ package-lock.json
 .vercel
 next-env.d.ts
 .vscode
+
+# docs shallow git cloned repo
+dsource-*
