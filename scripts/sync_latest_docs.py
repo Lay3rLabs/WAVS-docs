@@ -14,9 +14,14 @@ parent_dir = os.path.dirname(current_dir)
 
 URL = "https://github.com/Lay3rLabs/wavs-foundry-template.git"
 
+if len(os.sys.argv) > 1:
+    COMMIT = os.sys.argv[1]
+else:
+    COMMIT = None
+
 def main():
-    commit = download_repo(URL, '4613d9335df44df0d352b52b8355e829703e538b') # https://github.com/Lay3rLabs/wavs-foundry-template/commits/reece/docs-sync/
-    print(f"Downloaded wavsfoundry at commit {commit}") # useful for save caching later if no changes were made upstream (when pulling latest)
+    commit = download_repo(URL, commit=COMMIT)
+    print(f"Downloaded wavsfoundry at commit {commit}")
 
     DEST = os.path.join(parent_dir, 'content', 'docs')
     SRC = os.path.join(parent_dir, 'dsource-wavs-foundry-template', 'docs')
@@ -79,6 +84,10 @@ def check_if_commented_import_line(fileContent) -> str:
         # does not account for multi line imports, out of scope for now.
         if '<!--' in line and 'import' in line:
             lines[i] = line.replace('<!--', '').replace('-->', '')
+
+        # if line contains <!--docsignore or docsignore--> , remove the line
+        if '<!--docsignore' in line or 'docsignore-->' in line:
+            lines[i] = ''
 
     return '\n'.join(lines)
 
