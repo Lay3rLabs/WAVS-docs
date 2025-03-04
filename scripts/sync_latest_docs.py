@@ -74,9 +74,9 @@ def copy_files(source_dir, destination_dir):
             print(f"Copied directory: {item}")
 
 
-# Iterates through the mdx files and checks if the line is a commented import statement. i.e. `import { Callout } from 'fumadocs-ui/components/callout';`
-# if so, it will uncomment it in the file
-# <!--import { Callout } from 'fumadocs-ui/components/callout';--> becomes import { Callout } from 'fumadocs-ui/components/callout';
+# iterates through every line in file content and removes commented out import lines
+# there are from the other side (the template) that are showing information that does not need to be seen.abs
+# we still need it here, so we process.
 def check_if_commented_import_line(fileContent) -> str:
     lines = fileContent.split('\n')
     new_lines = []
