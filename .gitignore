@@ -30,6 +30,5 @@ package-lock.json
 next-env.d.ts
 .vscode
 
-# docs copy is in the foundry template
-*.mdx
+# docs shallow git cloned repo
 dsource-*
