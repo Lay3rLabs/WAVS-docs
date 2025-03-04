@@ -9,7 +9,7 @@ on:
             default: 'main'
             type: string
     schedule:
-      - cron: "0 12 */3 * *"  # noon every other day
+      - cron: "0 12 */3 * *"  # noon every so often
 
 permissions:
   contents: write
@@ -50,10 +50,7 @@ jobs:
             delete-branch: true
             signoff: false
             token: ${{ secrets.GIT_WORKFLOW_PAT }}
-            # labels: |
-                # automated pr
-            # TODO: codeowners/group in the future w/ team-reviewers
-            # assignees: githubaccounthere
-            # reviewers: githubaccounthere
+            labels: |
+                automated pr
             body: |
                 Syncing the latest file commits from upstream.
