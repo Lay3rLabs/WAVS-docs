@@ -4,6 +4,8 @@
 # generated content
 .map.ts
 .contentlayer
+/public/sitemap*.xml
+/public/robots.txt
 
 # test & build
 /coverage
