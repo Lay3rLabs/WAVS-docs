@@ -17,12 +17,18 @@ jobs:
 
     - name: Generate the sitemap
       id: sitemap
-      uses: cicirello/generate-sitemap@v1
+      uses: cicirello/generate-sitemap@v1.7.2
       with:
         base-url-path: https://docs.wavs.xyz/
 
+    - name: Generate robots.txt
+      run: |
+        echo "User-agent: *" > robots.txt
+        echo "Allow: /" >> robots.txt
+        echo "Sitemap: https://docs.wavs.xyz/sitemap.xml" >> robots.txt
+
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v3
+      uses: peter-evans/create-pull-request@v5
       with:
         title: "Automated sitemap update"
         body: >
