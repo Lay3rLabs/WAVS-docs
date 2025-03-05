@@ -47,7 +47,7 @@ export const Footer = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            X (former Twitter)
+            X/Twitter
           </Link>
           <Link
             href="https://t.me/layer_xyz"
@@ -64,6 +64,14 @@ export const Footer = () => {
             rel="noopener noreferrer"
           >
             LinkedIn
+          </Link>
+          <Link
+            href="/sitemap.xml"
+            className="hover:text-gray-900 dark:hover:text-white"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Sitemap
           </Link>
         </nav>
       </div>
