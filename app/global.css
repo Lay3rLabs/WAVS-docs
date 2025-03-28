@@ -74,7 +74,7 @@ html.light {
     --border-primary: 195, 5%, 15%, 0.1;
     --border-secondary: 195, 5%, 15%, 0.05;
 
-    --background-base: 195, 5%, 95%, 1;
+    --background-base: 30, 10%, 8%, 1;
     --background-primary: 195, 5%, 15%, 0.08;
     --background-secondary: 195, 5%, 15%, 0.05;
     --background-tertiary: 195, 5%, 15%, 0.03;
@@ -87,16 +87,16 @@ html.light {
   }
 
   .dark {
-    --text-primary: 0, 0%, 100%, 1;
-    --text-body: 204, 26%, 96%, 0.95;
-    --text-secondary: 204, 26%, 96%, 0.7;
-    --text-tertiary: 204, 26%, 96%, 0.5;
+    --text-primary: 31, 33%, 86%, 1;
+    --text-body: 31, 33%, 86%, 0.95;
+    --text-secondary: 31, 33%, 86%, 0.7;
+    --text-tertiary: 31, 33%, 86%, 0.5;
     --text-accent: 287, 29%, 75%, 1;
 
     --border-primary: 204, 26%, 96%, 0.15;
     --border-secondary: 204, 26%, 96%, 0.05;
 
-    --background-base: 264, 9%, 11%, 1;
+    --background-base: 30, 10%, 8%, 1;
     --background-primary: 204, 26%, 96%, 0.08;
     --background-secondary: 204, 26%, 96%, 0.05;
     --background-tertiary: 204, 26%, 96%, 0.03;
