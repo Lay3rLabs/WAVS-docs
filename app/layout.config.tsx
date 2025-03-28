@@ -7,7 +7,7 @@ const logo = (
   <>
     <Image
       alt="Layer Logo"
-      src={'/logo-squircle.svg'}
+      src={'/logo-wavs.svg'}
       sizes="100px"
       width={100}
       height={100}
