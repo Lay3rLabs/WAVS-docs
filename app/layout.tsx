@@ -23,6 +23,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <RootProvider
           theme={{
             enabled: true,
+            defaultTheme: "dark",
           }}
         >
           <DocsLayout {...docsOptions}>{children}</DocsLayout>
