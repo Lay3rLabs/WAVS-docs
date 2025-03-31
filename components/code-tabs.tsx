@@ -20,7 +20,7 @@ import { wordWrap } from "./annotations/word-wrap";
 export async function CodeTabs(props: { tabs: RawCode[] }) {
   const { tabs } = props;
   const highlighted = await Promise.all(
-    tabs.map((tab) => highlight(tab, "github-dark"))
+    tabs.map((tab) => highlight(tab, "slack-dark"))
   );
   return (
     <Tabs defaultValue={tabs[0]?.meta} className="dark rounded">
