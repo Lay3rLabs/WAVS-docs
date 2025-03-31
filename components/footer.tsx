@@ -10,6 +10,14 @@ export const Footer = () => {
           <Image
             alt="Layer Logo"
             src="/wordmark-white.svg"
+            className="dark:block hidden"
+            width={200}
+            height={80}
+          />
+          <Image
+            alt="Layer Logo"
+            src="/wordmark-black.svg"
+            className="block dark:hidden"
             width={200}
             height={80}
           />
