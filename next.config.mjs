@@ -9,7 +9,7 @@ const chConfig = {
     inlineCode: "MyInlineCode",
   },
   syntaxHighlighting: {
-    theme: "github-dark",
+    theme: "min-dark",
   },
 };
 
