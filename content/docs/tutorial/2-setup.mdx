@@ -182,5 +182,30 @@ Visit the [JQ Documentation](https://jqlang.org/download/) for more info.
 
 Node v21+ is needed for the WAVS template. Visit the [NVM Installation guide](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating) to install Node Version Manager and update your Node version.
 
+## Ubuntu
+
+<Callout title="Ubuntu LTS Systems" type="warn">
+
+On Ubuntu LTS, if you later encounter errors like:
+
+```
+wkg: /lib/x86_64-linux-gnu/libm.so.6: version `GLIBC_2.38' not found (required by wkg)
+wkg: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.39' not found (required by wkg)
+```
+
+Ensure you are on the latest Ubuntu LTS release. You can check your Ubuntu release and GLIBC version with:
+
+```bash
+lsb_release -a
+ldd --version
+```
+
+If GLIB is out of date. Consider updating your system using:
+
+```bash
+sudo do-release-upgrade
+```
+
+</Callout>
 
 After setting up your system, continue to the next page to create your project.
