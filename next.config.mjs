@@ -30,8 +30,6 @@ const withMDX = createMDX({
 /** @type {import('next').NextConfig} */
 const config = {
   reactStrictMode: true,
-<<<<<<< Updated upstream
-=======
   
   // Add rewrite rules for LLM access and markdown
   async rewrites() {
@@ -53,7 +51,6 @@ const config = {
       },
     ];
   },
->>>>>>> Stashed changes
 };
 
 export default withMDX(config);
