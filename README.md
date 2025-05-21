@@ -13,8 +13,6 @@ npm run dev
 
 These docs were created using [Fumadocs](https://fumadocs.vercel.app/docs/ui).
 
-<<<<<<< Updated upstream
-=======
 ## LLM and Machine-Readable Documentation
 
 This documentation site offers machine-readable formats that make it easy for AI assistants and tools to access the content:
@@ -27,7 +25,6 @@ This documentation site offers machine-readable formats that make it easy for AI
   - `https://docs.wavs.xyz/tutorial/1-overview.md` - Tutorial intro as Markdown
 
 
->>>>>>> Stashed changes
 ## Updating the theme
 
 This site is built with [Fumadocs](https://fumadocs.vercel.app/docs/ui/theme). To update the theme, navigate to `tailwind.config.js`, and `global.css`. Styles are generated/applied by the tailwind config, which references the variables defined in the global CSS file.
