@@ -1,0 +1,4 @@
+{
+    "title": "Components",
+    "pages": [ "component", "variables", "utilities", "network-requests", "blockchain-interactions" ]
+}
