@@ -1,6 +1,7 @@
 import { type BaseLayoutProps, type DocsLayoutProps } from "fumadocs-ui/layout"
 import { pageTree } from "@/app/source"
 import Image from 'next/image';
+import { OpenInLLM } from "@/components/open-in-llm";
 
 //logo
 const logo = (
@@ -44,13 +45,13 @@ export const baseOptions: BaseLayoutProps = {
           WAVS Docs
         </span>
       </>
-  },
+  }
 }
 
 // docs layout configuration
 export const docsOptions: DocsLayoutProps = {
   ...baseOptions,
-  tree: pageTree,
+  tree: pageTree
 }
 
 
