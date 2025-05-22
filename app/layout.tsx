@@ -6,6 +6,7 @@ import { DocsLayout } from "fumadocs-ui/layout";
 import { docsOptions } from "./layout.config";
 import { Footer } from "@/components/footer";
 import { OpenInLLM } from "@/components/open-in-llm";
+import { Banner } from "fumadocs-ui/components/banner";
 
 
 const inter = Inter({
