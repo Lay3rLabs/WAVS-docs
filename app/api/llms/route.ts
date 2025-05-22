@@ -220,19 +220,23 @@ function isExternalUrl(url: string): boolean {
   return url.startsWith('http://') || url.startsWith('https://');
 }
 
-// Helper to add .md extension to internal URLs
-function addMdExtension(url: string): string {
+// Helper to format URLs for the output
+function formatUrl(url: string): string {
   // Don't modify external URLs
   if (isExternalUrl(url)) {
     return url;
   }
   
-  // Don't add .md to URLs that end with a slash 
+  // Special case for the homepage - don't add .md extension
+  if (url === '/') {
+    return '';
+  }
+  
+  // Add .md to other internal URLs
   if (url.endsWith('/')) {
     return url.substring(0, url.length - 1) + '.md';
   }
   
-  // Add .md to internal URLs
   return url + '.md';
 }
 
@@ -247,7 +251,7 @@ function formatSections(sections: Map<string, Section>): string {
     
     // Add pages in this section
     for (const page of section.pages.values()) {
-      const formattedUrl = addMdExtension(page.url);
+      const formattedUrl = formatUrl(page.url);
       content += `- [${page.title}](https://docs.wavs.xyz${formattedUrl}): ${page.description}\n`;
     }
     
