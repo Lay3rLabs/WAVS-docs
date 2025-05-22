@@ -15,7 +15,7 @@ if (process.env.NODE_ENV === "production") {
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ["class"],
-  purge: process.env.NODE_ENV === "production" ? true : false,
+  content: contentPaths, // Use content instead of purge in v3
   presets: [
     createPreset({
       addGlobalColors: true,
@@ -36,7 +36,6 @@ export default {
       },
     }),
   ],
-  content: contentPaths,
   plugins: [require("@tailwindcss/typography")],
   theme: {
     extend: {

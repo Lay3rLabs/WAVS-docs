@@ -1,12 +1,13 @@
 ---
 title: 4. Oracle component walkthrough
+description: evm-price-oracle component walkthrough
 ---
 import { HoverContainer } from "@/components/hover-container";
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Scrollycoding } from "@/components/scrollycoding";
 import { link } from "@/components/link.tsx";
 
-The core logic of the price oracle in this example is located in the [`/eth-price-oracle/src/lib.rs` file](https://github.com/Lay3rLabs/wavs-foundry-template/tree/v0.3.0/components/eth-price-oracle/src/lib.rs). Scroll down to follow a walkthrough of the code for the oracle component.
+The core logic of the price oracle in this example is located in the [`/evm-price-oracle/src/lib.rs` file](https://github.com/Lay3rLabs/wavs-foundry-template/tree/v0.3.0/components/evm-price-oracle/src/lib.rs). Scroll down to follow a walkthrough of the code for the oracle component.
 
 
 <HoverContainer>
@@ -14,14 +15,14 @@ The core logic of the price oracle in this example is located in the [`/eth-pric
 
 ## !!steps trigger.rs
 
-The [trigger.rs](https://github.com/Lay3rLabs/wavs-foundry-template/tree/v0.3.0/components/eth-price-oracle/src/trigger.rs) file handles the decoding of incoming trigger data and preparing it for processing within the WAVS component. The `encode_trigger_output` function ensures that processed data is formatted correctly before being sent back. Update the code if you require different trigger types (e.g. Cosmos events) or if you are building a [custom trigger](./5-build#custom-triggers).
+The [trigger.rs](https://github.com/Lay3rLabs/wavs-foundry-template/tree/v0.3.0/components/evm-price-oracle/src/trigger.rs) file handles the decoding of incoming trigger data (`decode_event_log_data!()`) and prepares it for processing within the WAVS component. The `encode_trigger_output` function ensures that processed data is formatted correctly before being sent back. Update the code if you require different trigger types (e.g. Cosmos events) or if you are building a [custom trigger](./5-build#custom-triggers).
 
 
 ```rust ! trigger.rs
 use crate::bindings::wavs::worker::layer_types::{TriggerData, TriggerDataEthContractEvent};
 use alloy_sol_types::SolValue;
 use anyhow::Result;
-use wavs_wasi_chain::decode_event_log_data;
+use wavs_wasi_utils::decode_event_log_data;
 
 pub enum Destination {
     Ethereum,
@@ -56,13 +57,13 @@ mod solidity {
 
 ## !!steps Oracle component definitions
 
-The [`lib.rs`](https://github.com/Lay3rLabs/wavs-foundry-template/tree/v0.3.0/components/eth-price-oracle/src/lib.rs) file contains the main component logic for the oracle. The first section of the code imports the required modules for requests, serialization, and bindings, defines the component struct, and exports the component for execution within the WAVS runtime.
+The [`lib.rs`](https://github.com/Lay3rLabs/wavs-foundry-template/tree/v0.3.0/components/evm-price-oracle/src/lib.rs) file contains the main component logic for the oracle. The first section of the code imports the required modules for requests, serialization, and bindings, defines the component struct, and exports the component for execution within the WAVS runtime.
 
 ```rust ! lib.rs
 // !focus(1:13)
 mod trigger;
 use trigger::{decode_trigger_event, encode_trigger_output, Destination};
-use wavs_wasi_chain::http::{fetch_json, http_request_get};
+use wavs_wasi_utils::http::{fetch_json, http_request_get};
 pub mod bindings;
 use crate::bindings::{export, Guest, TriggerAction};
 use serde::{Deserialize, Serialize};
@@ -189,7 +190,7 @@ The next section decodes the event sent from the trigger and extracts the `trigg
 ```rust ! lib.rs
 mod trigger;
 use trigger::{decode_trigger_event, encode_trigger_output, Destination};
-use wavs_wasi_chain::http::{fetch_json, http_request_get};
+use wavs_wasi_utils::http::{fetch_json, http_request_get};
 pub mod bindings;
 use crate::bindings::{export, Guest, TriggerAction};
 use serde::{Deserialize, Serialize};
