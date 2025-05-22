@@ -36,6 +36,22 @@ async function processContent(content: string): Promise<string> {
     return `\n**${title}**: ${description}\n`;
   });
   
+  // Preserve image tags before removing other HTML
+  // First, capture img tags with src attribute
+  content = content.replace(/<img\s+[^>]*?src=["']([^"']*?)["'][^>]*?alt=["']([^"']*?)["'][^>]*?>/g, (_, src, alt) => {
+    return `![${alt}](${src})`;
+  });
+  
+  // Also capture img tags where alt comes before src
+  content = content.replace(/<img\s+[^>]*?alt=["']([^"']*?)["'][^>]*?src=["']([^"']*?)["'][^>]*?>/g, (_, alt, src) => {
+    return `![${alt}](${src})`;
+  });
+  
+  // Handle img tags without alt text
+  content = content.replace(/<img\s+[^>]*?src=["']([^"']*?)["'][^>]*?>/g, (_, src) => {
+    return `![Image](${src})`;
+  });
+  
   // Handle basic JSX
   content = content.replace(/<(\w+)([^>]*)>([\s\S]*?)<\/\1>/g, (_, tag, attrs, content) => {
     return content;
