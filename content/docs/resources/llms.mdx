@@ -11,6 +11,8 @@ The LLM text format presents documentation in a clean, plain text format optimiz
 
 The `llms.txt` format is a structured index of documentation pages organized by sections, including page titles, URLs and descriptions. This format is ideal for AI assistants to understand the documentation structure without processing the full content.
 
+[https://docs.wavs.xyz/llms.txt](https://docs.wavs.xyz/llms.txt)
+
 ```
 curl https://docs.wavs.xyz/llms.txt
 ```
@@ -18,6 +20,9 @@ curl https://docs.wavs.xyz/llms.txt
 ## llms-full.txt
 
 The `llms-full.txt` format returns all documentation pages as a single text document.
+
+[https://docs.wavs.xyz/llms-full.txt](https://docs.wavs.xyz/llms-full.txt)
+
 ```
 curl https://docs.wavs.xyz/llms-full.txt
 ```
@@ -30,7 +35,4 @@ Get any page as standard Markdown by appending `.md` to its URL.
 curl https://docs.wavs.xyz/path/to/page.md
 ```
 
-Examples:
-- `/overview.md` - Overview page as Markdown
-- `/tutorial/1-overview.md` - Tutorial introduction as Markdown
-- `/handbook/service.md` - Service handbook as Markdown
+Example: [`/overview.md`](/overview.md) - Overview page as Markdown

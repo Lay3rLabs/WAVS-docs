@@ -41,10 +41,14 @@ async function buildSectionHierarchy(sectionPath: string, parentKey: string = ''
     const meta = JSON.parse(metaContent);
     
     const sectionKey = parentKey ? parentKey : sectionPath;
+    const pathParts = sectionPath.split('/');
+    const lastPart = pathParts.length > 0 ? pathParts[pathParts.length - 1] : '';
+    const titleFromPath = lastPart 
+      ? lastPart.charAt(0).toUpperCase() + lastPart.slice(1).replace(/-/g, ' ') 
+      : 'Unknown';
+    
     const section: Section = {
-      title: meta.title || (sectionPath === '' 
-        ? 'Home' 
-        : sectionPath.split('/').pop()?.charAt(0).toUpperCase() + sectionPath.split('/').pop()?.slice(1).replace(/-/g, ' ') || 'Unknown'),
+      title: meta.title || (sectionPath === '' ? 'Home' : titleFromPath),
       key: sectionKey,
       pages: new Map(),
       subsections: new Map(),
