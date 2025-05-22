@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { DocsLayout } from "fumadocs-ui/layout";
 import { docsOptions } from "./layout.config";
 import { Footer } from "@/components/footer";
+import { OpenInLLM } from "@/components/open-in-llm";
 
 
 const inter = Inter({
