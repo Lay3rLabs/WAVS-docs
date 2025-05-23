@@ -121,7 +121,7 @@ html.light {
 /* ****** PROSE LINKS ****** */
 .prose p a,
 .prose li a {
-  color: var(--tw-prose-links);
+  color: #9376A4;
   text-decoration: none;
   opacity: 0.90; /* Slightly lighter when not hovered */
   transition: color 0.2s ease, opacity 0.2s ease, text-decoration 0.2s ease;
@@ -129,7 +129,7 @@ html.light {
 
 .prose p a:hover,
 .prose li a:hover {
-  color: hsl(var(--text-accent)); /* Darker on hover */
+  color: #9376A4; /* Same color on hover */
   text-decoration: underline;
   opacity: 1; /* Full opacity on hover */
 }
@@ -159,5 +159,32 @@ html.light {
   padding: 0.2rem 0.4rem;
   border-radius: 0.25rem;
   font-family: monospace;
+}
+
+/* ****** HEADING COLORS ****** */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  color: #8A6244;
+}
+
+/* ****** CALLOUT INFO ICON ****** */
+.fill-blue-500 {
+  fill: #9376A4 !important;
+}
+
+/* ****** CARD ICONS ****** */
+[data-card] svg,
+.card svg,
+a[href] svg {
+  stroke: #A87B5A !important;
+}
+
+/* ****** BLOCKQUOTE ****** */
+.prose blockquote {
+  color: #9376A4 !important;
 }
 
