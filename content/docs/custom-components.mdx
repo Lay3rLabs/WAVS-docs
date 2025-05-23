@@ -1,5 +1,5 @@
 ---
-title: Custom Component Handbook
+title: Custom component handbook
 ---
 import { Callout } from 'fumadocs-ui/components/callout';
 import { DocsPage } from 'fumadocs-ui/page';
@@ -12,7 +12,7 @@ Before reading this guide, follow the [Oracle component tutorial](/tutorial/1-ov
 
 Use the info in this guide to customize the template to create your own custom service. Check out the [WAVS design considerations](/design) page to learn which use-cases WAVS is best suited for.
 
-## Foundry Template structure
+## Foundry template structure
 
 The foundry template is made up of the following main files:
 
@@ -217,7 +217,7 @@ deploy-service:
 
 The makefile contains several commands for building, testing, and deploying WAVS components. Here's a detailed explanation of the most commonly used commands:
 
-#### Building and Testing Components
+#### Building and testing components
 
 1. Build your WASI components
 
@@ -276,7 +276,7 @@ forge test
 - **Under the hood**:
   - Executes the test suite using Foundry's `forge test` command.
 
-#### Starting Services
+#### Starting services
 
 ```bash
 make start-all
@@ -290,7 +290,7 @@ make start-all
     - Starts the main `wavs` service and the `aggregator` service.
     - Deploys EigenLayer core contracts for local development and your Service Manager contract which manages your AVS.
 
-#### Deployment and Execution
+#### Deployment and execution
 
 ```bash
 export SERVICE_MANAGER_ADDR=`make get-eigen-service-manager-from-deploy`
@@ -331,7 +331,7 @@ forge script ./script/Trigger.s.sol ${SERVICE_TRIGGER_ADDR} ${COIN_MARKET_CAP_ID
   - Uses the specified RPC URL to interact with the local Anvil node.
   - Broadcasts the transaction to the network.
 
-#### Viewing Results
+#### Viewing results
 
 ```bash
 make show-result
@@ -413,7 +413,7 @@ make get-service-handler-from-deploy
 make get-eigen-service-manager-from-deploy
 ```
 
-#### Customizing Makefile variables
+#### Customizing makefile variables
 
 Makefile variables can be overridden when running make commands. For example, running the following in your terminal will use a different component when testing:
 
@@ -427,7 +427,7 @@ To trigger the component from an external contract, you can set the trigger addr
 TRIGGER_ADDRESS ?= 0x1234567890123456789012345678901234567890
 TRIGGER_EVENT ?= MyCustomEvent(bytes)
 ```
-{/* todo: link here: */}
+
 You can also add variables to the makefile, such as public variables to be referenced in your component or reference private variables like API keys. Find out more in the [Environment Variables](#environment-variables) section.
 
 ## Toml files
@@ -484,7 +484,7 @@ package = "component:eth-price-oracle"  # Component package name
 target = "wavs:worker/layer-trigger-world@0.3.0"  # Target WAVS world and version
 ```
 
-## Input and Output
+## Input and output
 
 When building WASI components, keep in mind that the component can receive the trigger data in two ways:
 
@@ -493,7 +493,7 @@ When building WASI components, keep in mind that the component can receive the t
 2. Manually via the `wasi-exec` command. The wasi-exec command simulates an onchain event and passes the trigger data directly to the component as `trigger::raw`. No abi decoding is required, and the output is returned as raw bytes.
     - In the `ETH_PRICE_ORACLE` component, the input data needs to be formatted into a `bytes32` string using the `cast format-bytes32-string` when using the `make wasi-exec` command. When creating your own components, use an appropriate format for your use case to use the `wasi-exec` command.
 
-### Data Processing Pattern
+### Data processing pattern
 
 The example below shows a basic generic pattern for processing input data and returning output. In the example, the `sol!` macro generates Rust types from Solidity definitions, adds ABI encoding/decoding methods, and handles type conversions (e.g., `uint64` → `u64`). ABI encoding/decoding converts Rust structs to bytes and vice versa. The `decode_event_log_data!` macro decodes the raw event log data and returns a Rust struct matching your Solidity event. This is used for on-chain events.
 
@@ -631,7 +631,7 @@ The macro reads a Solidity interface file and generates corresponding Rust types
 
 More documentation on the `sol!` macro can be found at: https://docs.rs/alloy-sol-macro/latest/alloy_sol_macro/macro.sol.html
 
-## Environment Variables
+## Environment variables
 
 Components can be configured with two types of variables:
 
@@ -793,7 +793,7 @@ serde = { workspace = true }           # Serialization/deserialization
 serde_json = { workspace = true }      # JSON handling
 ```
 
-### Chain Configuration
+### Chain configuration
 
 Chain configurations are defined in the root `wavs.toml` file. This allows components to access RPC endpoints and chain IDs without hardcoding them.
 
@@ -809,7 +809,7 @@ ws_endpoint = "wss://mainnet.infura.io/ws/v3/YOUR_INFURA_ID"
 http_endpoint = "https://mainnet.infura.io/v3/YOUR_INFURA_ID"
 ```
 
-### Accessing Configuration and Provider
+### Accessing configuration and provider
 
 WAVS provides host bindings to get the chain config for a given chain name in the wavs.toml file:
 
@@ -841,7 +841,7 @@ let provider: RootProvider<Ethereum> = new_eth_provider::<Ethereum>(
 )?;
 ```
 
-### Example: Querying NFT Balance
+### Example: Querying NFT balance
 
 Here's an example demonstrating how to query the balance of an ERC721 NFT contract for a given owner address.
 

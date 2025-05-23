@@ -65,7 +65,7 @@ After the execution of a service component in the WAVS runtime, the results are 
 
 You can view an example service handler contract in the template tutorial. This service handler contract [calls the `Service Manager` contract](https://github.com/Lay3rLabs/wavs-foundry-template/blob/v0.3.0/src/contracts/WavsSubmit.sol) to validate operator signatures before executing the business logic (storing BTC price onchain in this case). This contract contains a basic example of verifying submission data, however, a submission contract can theoretically contain any business logic that a service may need.
 
-## WAVS Runtime
+## WAVS runtime
 
 The WAVS (WASI-AVS) runtime serves as the off-chain execution environment for all services running on the WAVS platform. Powered by operators running the WAVS node software, it provides a structured framework for deploying and managing service components that run within a WASI (WebAssembly System Interface) environment.
 You can think of WASI as a lightweight OS-like interface, offering a standard set of APIs that allow service components to perform system-level operations such as file handling and environment interactions. WAVS enables service components to execute securely within this WASI-powered sandbox, ensuring isolation from both the host system and other components.
