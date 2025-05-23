@@ -183,3 +183,8 @@ a[href] svg {
   stroke: #A87B5A !important;
 }
 
+/* ****** BLOCKQUOTE ****** */
+.prose blockquote {
+  color: #9376A4 !important;
+}
+
