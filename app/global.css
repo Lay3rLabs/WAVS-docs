@@ -176,3 +176,10 @@ html.light {
   fill: #9376A4 !important;
 }
 
+/* ****** CARD ICONS ****** */
+[data-card] svg,
+.card svg,
+a[href] svg {
+  stroke: #A87B5A !important;
+}
+
