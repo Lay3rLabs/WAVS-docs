@@ -39,19 +39,19 @@ jobs:
           # Install html2md
           npm install -g html-to-markdown
           
-          # Clone the wavs-wasi-utils repo using the token
-          git clone https://${{ secrets.DOCS_PAT }}@github.com/Lay3rLabs/wavs-wasi-utils.git
-          cd wavs-wasi-utils
+          # Clone the wavs-wasi repo using the token
+          git clone https://${{ secrets.DOCS_PAT }}@github.com/Lay3rLabs/wavs-wasi.git
+          cd wavs-wasi/packages/wavs-wasi-utils
           
           # Generate HTML docs
           cargo doc --no-deps
           
           # Convert HTML to markdown
-          html2md target/doc/wavs_wasi_utils/index.html > ../public/wavs-wasi-utils.md
+          html2md ../../target/doc/wavs_wasi_utils/index.html > ../../../public/wavs-wasi-utils.md
           
           # Clean up
-          cd ..
-          rm -rf wavs-wasi-utils
+          cd ../../..
+          rm -rf wavs-wasi
 
       - name: Commit and push changes
         run: |
