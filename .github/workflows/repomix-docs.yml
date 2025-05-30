@@ -34,27 +34,37 @@ jobs:
         with:
           components: rustfmt
 
-      - name: Install Pandoc
-        run: sudo apt-get update && sudo apt-get install -y pandoc
-
       - name: Generate Rust Crate Documentation
         run: |
+          # Install html2md
+          cargo install html2md
+          
           # Clone the wavs-wasi repo using the token
           git clone https://${{ secrets.DOCS_PAT }}@github.com/Lay3rLabs/wavs-wasi.git
           cd wavs-wasi/packages/wavs-wasi-utils
           
-          # Generate HTML docs with all items
-          RUSTDOCFLAGS="--document-private-items" cargo doc --no-deps
+          # Build the docs
+          echo "Building docs with cargo..."
+          cargo doc --no-deps
           
-          # Create a temporary file with the HTML content
-          cat ../../target/doc/wavs_wasi_utils/index.html > ../../../temp_docs.html
+          # Create temporary directory for markdown files
+          TEMP_DIR=$(mktemp -d)
           
-          # Convert to markdown using pandoc
-          cd ../../..
-          pandoc temp_docs.html -f html -t markdown -o public/wavs-wasi-utils.md
+          # Convert and concatenate Markdown
+          DOC_DIR="../../target/doc/wavs_wasi_utils"
+          echo "Converting HTML docs to Markdown..."
+          find "$DOC_DIR" -name "*.html" | sort | while read -r html_file; do
+            md_file="$TEMP_DIR/$(basename "$html_file" .html).md"
+            html2md "$html_file" > "$md_file"
+          done
+          
+          # Concatenate all markdown files
+          echo "Concatenating Markdown files..."
+          cat "$TEMP_DIR"/*.md > ../../../public/wavs-wasi-utils.md
           
           # Clean up
-          rm -rf wavs-wasi temp_docs.html
+          cd ../../..
+          rm -rf wavs-wasi "$TEMP_DIR"
 
       - name: Commit and push changes
         run: |
