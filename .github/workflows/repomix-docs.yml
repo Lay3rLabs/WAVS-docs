@@ -50,65 +50,17 @@ jobs:
           # Create temporary directory for markdown files
           TEMP_DIR=$(mktemp -d)
           
-          # Start with the main index file
-          echo "# WAVS WASI Utils Documentation" > "$TEMP_DIR/main.md"
-          echo "\nThis documentation is generated from the \`wavs-wasi-utils\` crate.\n" >> "$TEMP_DIR/main.md"
-          
-          # Process the main index first
-          html2md "../../target/doc/wavs_wasi_utils/index.html" >> "$TEMP_DIR/main.md"
-          
-          # Process each module and function
+          # Convert and concatenate Markdown
           DOC_DIR="../../target/doc/wavs_wasi_utils"
-          
-          # Process modules in order
-          for module in evm http; do
-            if [ -f "$DOC_DIR/$module/index.html" ]; then
-              echo "\n## $module Module\n" >> "$TEMP_DIR/main.md"
-              html2md "$DOC_DIR/$module/index.html" >> "$TEMP_DIR/main.md"
-              
-              # Process functions in this module
-              for func_file in "$DOC_DIR/$module/fn."*.html; do
-                if [ -f "$func_file" ]; then
-                  func_name=$(basename "$func_file" .html | sed 's/fn\.//')
-                  echo "\n### $func_name\n" >> "$TEMP_DIR/main.md"
-                  html2md "$func_file" >> "$TEMP_DIR/main.md"
-                fi
-              done
-              
-              # Process submodules
-              for submodule in "$DOC_DIR/$module"/*/; do
-                if [ -d "$submodule" ] && [ -f "$submodule/index.html" ]; then
-                  submodule_name=$(basename "$submodule")
-                  echo "\n### $submodule_name Submodule\n" >> "$TEMP_DIR/main.md"
-                  html2md "$submodule/index.html" >> "$TEMP_DIR/main.md"
-                  
-                  # Process functions in submodule
-                  for func_file in "$submodule/fn."*.html; do
-                    if [ -f "$func_file" ]; then
-                      func_name=$(basename "$func_file" .html | sed 's/fn\.//')
-                      echo "\n#### $func_name\n" >> "$TEMP_DIR/main.md"
-                      html2md "$func_file" >> "$TEMP_DIR/main.md"
-                    fi
-                  done
-                fi
-              done
-            fi
+          echo "Converting HTML docs to Markdown..."
+          find "$DOC_DIR" -name "*.html" | sort | while read -r html_file; do
+            md_file="$TEMP_DIR/$(basename "$html_file" .html).md"
+            html2md "$html_file" > "$md_file"
           done
           
-          # Process macros
-          if [ -d "$DOC_DIR/macro" ]; then
-            echo "\n## Macros\n" >> "$TEMP_DIR/main.md"
-            for macro_file in "$DOC_DIR/macro."*.html; do
-              if [ -f "$macro_file" ]; then
-                macro_name=$(basename "$macro_file" .html | sed 's/macro\.//')
-                echo "\n### $macro_name\n" >> "$TEMP_DIR/main.md"
-                html2md "$macro_file" >> "$TEMP_DIR/main.md"
-              fi
-            done
-          fi
-          
-          # Copy the final markdown file
-          cp "$TEMP_DIR/main.md" ../../../public/wavs-wasi-utils.md
+          # Concatenate all markdown files
+          echo "Concatenating Markdown files..."
+          cat "$TEMP_DIR"/*.md > ../../../public/wavs-wasi-utils.md
           
           # Clean up
           cd ../../..
