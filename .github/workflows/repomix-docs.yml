@@ -50,17 +50,27 @@ jobs:
           # Create temporary directory for markdown files
           TEMP_DIR=$(mktemp -d)
           
-          # Convert and concatenate Markdown
+          # Start with the main index file
+          echo "# WAVS WASI Utils Documentation" > "$TEMP_DIR/main.md"
+          echo "\nThis documentation is generated from the \`wavs-wasi-utils\` crate.\n" >> "$TEMP_DIR/main.md"
+          
+          # Convert main index first
+          html2md "../../target/doc/wavs_wasi_utils/index.html" >> "$TEMP_DIR/main.md"
+          
+          # Process each module and function
           DOC_DIR="../../target/doc/wavs_wasi_utils"
-          echo "Converting HTML docs to Markdown..."
+          echo "\n## Modules\n" >> "$TEMP_DIR/main.md"
+          
+          # Process each HTML file in order
           find "$DOC_DIR" -name "*.html" | sort | while read -r html_file; do
-            md_file="$TEMP_DIR/$(basename "$html_file" .html).md"
-            html2md "$html_file" > "$md_file"
+            if [[ "$html_file" != "$DOC_DIR/index.html" ]]; then
+              echo "\n### $(basename "$html_file" .html)\n" >> "$TEMP_DIR/main.md"
+              html2md "$html_file" >> "$TEMP_DIR/main.md"
+            fi
           done
           
-          # Concatenate all markdown files
-          echo "Concatenating Markdown files..."
-          cat "$TEMP_DIR"/*.md > ../../../public/wavs-wasi-utils.md
+          # Copy the final markdown file
+          cp "$TEMP_DIR/main.md" ../../../public/wavs-wasi-utils.md
           
           # Clean up
           cd ../../..
