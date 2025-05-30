@@ -34,11 +34,11 @@ jobs:
         with:
           components: rustfmt
 
+      - name: Install Pandoc
+        run: sudo apt-get update && sudo apt-get install -y pandoc
+
       - name: Generate Rust Crate Documentation
         run: |
-          # Install required tools
-          npm install -g @microsoft/rush-markdown-to-html
-          
           # Clone the wavs-wasi repo using the token
           git clone https://${{ secrets.DOCS_PAT }}@github.com/Lay3rLabs/wavs-wasi.git
           cd wavs-wasi/packages/wavs-wasi-utils
@@ -49,12 +49,9 @@ jobs:
           # Create a temporary file with the HTML content
           cat ../../target/doc/wavs_wasi_utils/index.html > ../../../temp_docs.html
           
-          # Convert to markdown using a different approach
+          # Convert to markdown using pandoc
           cd ../../..
-          echo "# WAVS WASI Utils Documentation" > public/wavs-wasi-utils.md
-          echo "\n\`\`\`rust" >> public/wavs-wasi-utils.md
-          cat temp_docs.html | grep -A 1000 "module wavs_wasi_utils" | grep -B 1000 "</div>" >> public/wavs-wasi-utils.md
-          echo "\`\`\`" >> public/wavs-wasi-utils.md
+          pandoc temp_docs.html -f html -t markdown -o public/wavs-wasi-utils.md
           
           # Clean up
           rm -rf wavs-wasi temp_docs.html
