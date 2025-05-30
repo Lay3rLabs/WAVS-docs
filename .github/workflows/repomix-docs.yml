@@ -1,0 +1,38 @@
+name: Generate Repomix Documentation
+
+on:
+  schedule:
+    - cron: '0 0 */2 * *'  # Runs every 2 days at midnight UTC
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Repomix
+        run: npm install -g repomix
+
+      - name: Generate WAVS Foundry Template Documentation
+        run: repomix --remote Lay3rLabs/wavs-foundry-template -o public/wavs-foundry-template.md --style markdown
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add public/wavs-foundry-template.md
+          git commit -m "Update Repomix documentation" || exit 0
+          git push 
