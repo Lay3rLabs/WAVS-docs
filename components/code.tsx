@@ -19,11 +19,23 @@ import { wordWrap } from "./annotations/word-wrap";
 export async function Code({ codeblock }: { codeblock: RawCode }) {
   const highlighted = await highlight(codeblock, "min-dark");
 
+  // Extract the filename/title from meta value, handling cases with docci commands
+  const displayMeta = highlighted.meta ? (() => {
+    // Split by spaces to handle both formats:
+    // "docci-ignore filename" or "filename docci-ignore"
+    const parts = highlighted.meta.split(' ');
+    
+    // Find the part that doesn't start with 'docci'
+    const title = parts.find(part => !part.startsWith('docci'));
+    
+    return title || null;
+  })() : null;
+
   return (
     <div className="border rounded relative">
-{highlighted.meta && (
+{displayMeta && (
   <div className="text-center text-zinc-400 text-sm min-h-[2rem] flex items-center justify-center">
-    {highlighted.meta}
+    {displayMeta}
   </div>
 )}
       <Pre
