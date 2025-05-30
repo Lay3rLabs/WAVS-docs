@@ -37,7 +37,7 @@ jobs:
       - name: Install Pandoc
         run: sudo apt-get update && sudo apt-get install -y pandoc
 
-      - name: Generate Rust Crate Documentation
+      - name: Generate WAVS WASI Utils Documentation
         run: |
           # Clone the wavs-wasi repo using the token
           git clone https://${{ secrets.DOCS_PAT }}@github.com/Lay3rLabs/wavs-wasi.git
@@ -80,10 +80,53 @@ jobs:
           cd ../../..
           rm -rf wavs-wasi "$TEMP_DIR"
 
+      - name: Generate WAVS Foundry Template Rust Documentation
+        run: |
+          # Clone the wavs-foundry-template repo using the token
+          git clone https://${{ secrets.DOCS_PAT }}@github.com/Lay3rLabs/wavs-foundry-template.git
+          cd wavs-foundry-template
+
+          # Build the docs
+          echo "Building docs with cargo..."
+          cargo doc --no-deps
+
+          # Create temporary directory for markdown files
+          TEMP_DIR=$(mktemp -d)
+          echo "Created temp directory: $TEMP_DIR"
+
+          # Convert and concatenate Markdown
+          DOC_DIR="target/doc/wavs_foundry_template"
+          echo "Converting HTML docs to Markdown..."
+
+          find "$DOC_DIR" -name "*.html" | sort | while read -r html_file; do
+            echo "Processing: $html_file"
+            clean_name=$(basename "$html_file" .html | sed 's/fn\.//' | sed 's/macro\.//')
+            md_file="$TEMP_DIR/$clean_name.md"
+            if [[ "$html_file" == *"/fn."* ]]; then
+              echo "## Function: $clean_name" > "$md_file"
+            elif [[ "$html_file" == *"/macro."* ]]; then
+              echo "## Macro: $clean_name" > "$md_file"
+            elif [[ "$html_file" == *"/index.html" ]]; then
+              echo "# Module: $(dirname "$html_file" | xargs basename)" > "$md_file"
+            else
+              echo "## $clean_name" > "$md_file"
+            fi
+            echo "" >> "$md_file"
+            pandoc "$html_file" -f html -t markdown --wrap=none >> "$md_file"
+          done
+
+          # Concatenate all markdown files
+          echo "Concatenating Markdown files..."
+          cat "$TEMP_DIR"/*.md > ../public/wavs-foundry-template-rust.md
+
+          # Clean up
+          cd ..
+          rm -rf wavs-foundry-template "$TEMP_DIR"
+
       - name: Commit and push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add public/wavs-foundry-template.md public/wavs-wasi-utils.md
+          git add public/wavs-foundry-template.md public/wavs-foundry-template-rust.md public/wavs-wasi-utils.md
           git commit -m "Update documentation" || exit 0
           git push
