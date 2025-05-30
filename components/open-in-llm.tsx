@@ -35,33 +35,46 @@ export const OpenInLLM = () => {
     };
   }, []);
 
-  // Get current URL for generating the LLM links
-  const currentUrl = typeof window !== 'undefined' 
-    ? `${window.location.origin}${pathname}`
-    : '';
-  
   // Special handling for index page
   const isIndexPage = pathname === '/' || pathname === '/docs' || pathname === '/docs/';
   
-  // For index page, point to a specific markdown file
-  const markdownUrl = isIndexPage
-    ? `${window.location.origin}/docs/index.md`
-    : `${currentUrl}.md`;
+  // Get current URL for generating the LLM links - safely handled for SSR
+  const [currentUrl, setCurrentUrl] = useState('');
+  const [markdownUrl, setMarkdownUrl] = useState('');
+  
+  // Set up URLs once we're mounted on client side
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const baseUrl = `${window.location.origin}${pathname}`;
+      setCurrentUrl(baseUrl);
+      
+      // For index page, point to a specific markdown file
+      if (isIndexPage) {
+        setMarkdownUrl(`${window.location.origin}/docs/index.md`);
+      } else {
+        setMarkdownUrl(`${baseUrl}.md`);
+      }
+    }
+  }, [pathname, isIndexPage]);
 
   // Function to create Claude URL
   const getClaudeUrl = () => {
+    if (!mounted || typeof window === 'undefined') return '#';
     const url = isIndexPage ? `${window.location.origin}/api/md/docs/index` : markdownUrl;
     return `https://claude.ai/new?q=${encodeURIComponent(`Read from ${url} so I can ask questions about it`)}`;
   };
 
   // Function to create ChatGPT URL
   const getChatGPTUrl = () => {
+    if (!mounted || typeof window === 'undefined') return '#';
     const url = isIndexPage ? `${window.location.origin}/api/md/docs/index` : markdownUrl;
     return `https://chatgpt.com/?hints=search&q=${encodeURIComponent(`Read from ${url} so I can ask questions about it`)}`;
   };
 
   // Function to copy markdown content
   const copyMarkdown = async () => {
+    if (!mounted || typeof window === 'undefined') return;
+    
     try {
       // For index page, we need to fetch the index.mdx file and convert it
       if (isIndexPage) {
@@ -175,7 +188,7 @@ export const OpenInLLM = () => {
             </button>
             
             <a 
-              href={isIndexPage ? `${window.location.origin}/api/md/docs/index` : markdownUrl}
+              href={mounted ? (isIndexPage ? `${window.location.origin}/api/md/docs/index` : markdownUrl) : '#'}
               target="_blank"
               rel="noopener noreferrer" 
               className="flex items-center gap-2 px-3 py-2.5 text-sm text-[hsl(var(--text-primary))] hover:bg-[hsl(var(--background-secondary))] no-underline"
@@ -194,20 +207,20 @@ export const OpenInLLM = () => {
             <div className="mt-2 px-3 py-2 border-t border-[hsl(var(--border-primary))]">
               <div className="grid grid-cols-2 gap-2">
                 <a 
-                  href="llms.txt"
+                  href="/llms.txt"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex justify-center items-center gap-1 px-2 py-1.5 text-xs font-medium rounded-md text-[hsl(var(--text-primary))] bg-[hsl(var(--background-secondary))] hover:bg-[hsl(var(--background-primary))] no-underline border border-[hsl(var(--border-primary))] transition-colors"
                 >
-                  <span>/llms.txt</span>
+                  <span>llms.txt</span>
                 </a>
                 <a 
-                  href="llms-full.txt"
+                  href="/llms-full.txt"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex justify-center items-center gap-1 px-2 py-1.5 text-xs font-medium rounded-md text-[hsl(var(--text-primary))] bg-[hsl(var(--background-secondary))] hover:bg-[hsl(var(--background-primary))] no-underline border border-[hsl(var(--border-primary))] transition-colors"
                 >
-                  <span>/llms-full.txt</span>
+                  <span>llms-full.txt</span>
                 </a>
               </div>
             </div>
