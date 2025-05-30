@@ -1,44 +1,15 @@
-::: sidebar-crate
-## [wavs_wasi_utils](../wavs_wasi_utils/index.html)[0.4.0-beta.4]{.version}
-:::
-
-::: sidebar-elems
--   [All Items](all.html){#all-types}
-
-::: {#rustdoc-toc .section}
-### [Crate Items](#modules)
-
--   [Modules](#modules "Modules")
--   [Macros](#macros "Macros")
-:::
-
-::: {#rustdoc-modnav}
-:::
-:::
-
-::: sidebar-resizer
-:::
-
-::: {role="main"}
-::: width-limiter
-::: {#main-content .section .content}
-::: main-heading
-# Crate wavs_wasi_utilsCopy item path
-
-[[Source](../src/wavs_wasi_utils/lib.rs.html#1-2){.src} ]{.sub-heading}
-:::
-
-## Modules[§](#modules){.anchor} {#modules .section-header}
-
-[evm](evm/index.html "mod wavs_wasi_utils::evm"){.mod}\
-[http](http/index.html "mod wavs_wasi_utils::http"){.mod}
-:   HTTP helpers to make requests. Will eventually be deprecated by
-    improvements to wstd, reqwest, etc.
-
-## Macros[§](#macros){.anchor} {#macros .section-header}
-
-[decode_event_log_data](macro.decode_event_log_data.html "macro wavs_wasi_utils::decode_event_log_data"){.macro}
-:   Decode a given `log_data` into a typed event `T`.
-:::
-:::
-:::
+../../target/doc/wavs\_wasi\_utils/evm/event/fn.decode\_event\_log\_data\_raw.html
+../../target/doc/wavs\_wasi\_utils/evm/event/index.html
+../../target/doc/wavs\_wasi\_utils/evm/fn.new\_evm\_provider.html
+../../target/doc/wavs\_wasi\_utils/evm/index.html
+../../target/doc/wavs\_wasi\_utils/evm/provider/fn.new\_evm\_provider.html
+../../target/doc/wavs\_wasi\_utils/http/fn.fetch\_bytes.html
+../../target/doc/wavs\_wasi\_utils/http/fn.fetch\_json.html
+../../target/doc/wavs\_wasi\_utils/http/fn.fetch\_string.html
+../../target/doc/wavs\_wasi\_utils/http/fn.http\_request\_get.html
+../../target/doc/wavs\_wasi\_utils/http/fn.http\_request\_post\_form.html
+../../target/doc/wavs\_wasi\_utils/http/fn.http\_request\_post\_json.html
+../../target/doc/wavs\_wasi\_utils/http/index.html
+../../target/doc/wavs\_wasi\_utils/index.html
+../../target/doc/wavs\_wasi\_utils/macro.decode\_event\_log\_data!.html
+../../target/doc/wavs\_wasi\_utils/macro.decode\_event\_log\_data.html
