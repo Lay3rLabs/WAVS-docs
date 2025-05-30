@@ -36,30 +36,33 @@ jobs:
 
       - name: Generate Rust Crate Documentation
         run: |
-          # Install html-to-markdown
-          npm install -g html-to-markdown
+          # Install required tools
+          npm install -g @microsoft/rush-markdown-to-html
           
           # Clone the wavs-wasi repo using the token
           git clone https://${{ secrets.DOCS_PAT }}@github.com/Lay3rLabs/wavs-wasi.git
           cd wavs-wasi/packages/wavs-wasi-utils
           
-          # Generate HTML docs
-          cargo doc --no-deps
+          # Generate HTML docs with all items
+          RUSTDOCFLAGS="--document-private-items" cargo doc --no-deps
           
-          # Convert HTML to markdown (using the correct command name)
-          html-to-markdown ../../target/doc/wavs_wasi_utils/index.html > ../../../public/wavs-wasi-utils.md || {
-            echo "Failed to convert HTML to markdown. Falling back to direct copy..."
-            cp ../../target/doc/wavs_wasi_utils/index.html ../../../public/wavs-wasi-utils.html
-          }
+          # Create a temporary file with the HTML content
+          cat ../../target/doc/wavs_wasi_utils/index.html > ../../../temp_docs.html
+          
+          # Convert to markdown using a different approach
+          cd ../../..
+          echo "# WAVS WASI Utils Documentation" > public/wavs-wasi-utils.md
+          echo "\n\`\`\`rust" >> public/wavs-wasi-utils.md
+          cat temp_docs.html | grep -A 1000 "module wavs_wasi_utils" | grep -B 1000 "</div>" >> public/wavs-wasi-utils.md
+          echo "\`\`\`" >> public/wavs-wasi-utils.md
           
           # Clean up
-          cd ../../..
-          rm -rf wavs-wasi
+          rm -rf wavs-wasi temp_docs.html
 
       - name: Commit and push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add public/wavs-foundry-template.md public/wavs-wasi-utils.md public/wavs-wasi-utils.html
+          git add public/wavs-foundry-template.md public/wavs-wasi-utils.md
           git commit -m "Update documentation" || exit 0
           git push
