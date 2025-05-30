@@ -36,15 +36,18 @@ jobs:
 
       - name: Generate Rust Crate Documentation
         run: |
-          # Install cargo-doc2md if not already installed
-          cargo install cargo-doc2md
+          # Install html2md
+          npm install -g html-to-markdown
           
           # Clone the wavs-wasi-utils repo
           git clone https://github.com/Lay3rLabs/wavs-wasi-utils.git
           cd wavs-wasi-utils
           
-          # Generate markdown docs
-          cargo doc2md > ../public/wavs-wasi-utils.md
+          # Generate HTML docs
+          cargo doc --no-deps
+          
+          # Convert HTML to markdown
+          html2md target/doc/wavs_wasi_utils/index.html > ../public/wavs-wasi-utils.md
           
           # Clean up
           cd ..
