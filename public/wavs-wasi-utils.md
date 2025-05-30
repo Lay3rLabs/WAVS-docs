@@ -1,3 +1,8 @@
+# WAVS WASI Utils Documentation
+\nThis documentation is generated from the `wavs-wasi-utils` crate.\n
+
+\n## Modules\n
+\n### all\n
 ../../target/doc/wavs\_wasi\_utils/evm/event/fn.decode\_event\_log\_data\_raw.html
 ../../target/doc/wavs\_wasi\_utils/evm/event/index.html
 ../../target/doc/wavs\_wasi\_utils/evm/fn.new\_evm\_provider.html
