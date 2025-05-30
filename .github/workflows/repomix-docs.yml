@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.DOCS_PAT }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -36,4 +38,4 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add public/wavs-foundry-template.md
           git commit -m "Update Repomix documentation" || exit 0
-          git push https://${{ secrets.DOCS_PAT }}@github.com/Lay3rLabs/WAVS-docs.git HEAD:${{ github.ref }}
+          git push
