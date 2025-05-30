@@ -37,7 +37,7 @@ jobs:
       - name: Install Pandoc
         run: sudo apt-get update && sudo apt-get install -y pandoc
 
-      - name: Generate WAVS WASI Utils Documentation
+      - name: Generate Rust Crate Documentation
         run: |
           # Clone the wavs-wasi repo using the token
           git clone https://${{ secrets.DOCS_PAT }}@github.com/Lay3rLabs/wavs-wasi.git
@@ -80,11 +80,11 @@ jobs:
           cd ../../..
           rm -rf wavs-wasi "$TEMP_DIR"
 
-      - name: Generate WAVS Foundry Template Rust Documentation
+      - name: Generate wavs-types Documentation
         run: |
-          # Clone the wavs-foundry-template repo using the token
-          git clone https://${{ secrets.DOCS_PAT }}@github.com/Lay3rLabs/wavs-foundry-template.git
-          cd wavs-foundry-template
+          # Clone the wavs-types repo using the token
+          git clone https://${{ secrets.DOCS_PAT }}@github.com/Lay3rLabs/wavs-types.git
+          cd wavs-types
 
           # Build the docs
           echo "Building docs with cargo..."
@@ -95,7 +95,7 @@ jobs:
           echo "Created temp directory: $TEMP_DIR"
 
           # Convert and concatenate Markdown
-          DOC_DIR="target/doc/wavs_foundry_template"
+          DOC_DIR="target/doc/wavs_types"
           echo "Converting HTML docs to Markdown..."
 
           find "$DOC_DIR" -name "*.html" | sort | while read -r html_file; do
@@ -117,16 +117,16 @@ jobs:
 
           # Concatenate all markdown files
           echo "Concatenating Markdown files..."
-          cat "$TEMP_DIR"/*.md > ../public/wavs-foundry-template-rust.md
+          cat "$TEMP_DIR"/*.md > ../public/wavs-types.md
 
           # Clean up
           cd ..
-          rm -rf wavs-foundry-template "$TEMP_DIR"
+          rm -rf wavs-types "$TEMP_DIR"
 
       - name: Commit and push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add public/wavs-foundry-template.md public/wavs-foundry-template-rust.md public/wavs-wasi-utils.md
+          git add public/wavs-foundry-template.md public/wavs-wasi-utils.md public/wavs-types.md
           git commit -m "Update documentation" || exit 0
           git push
