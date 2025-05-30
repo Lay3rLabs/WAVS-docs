@@ -1,4 +1,4 @@
-name: Generate Repomix Documentation
+name: Generate Documentation
 
 on:
   schedule:
@@ -23,19 +23,37 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        run: npm install
-
       - name: Install Repomix
         run: npm install -g repomix
 
       - name: Generate WAVS Foundry Template Documentation
         run: repomix --remote Lay3rLabs/wavs-foundry-template -o public/wavs-foundry-template.md --style markdown
 
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: Generate Rust Crate Documentation
+        run: |
+          # Install cargo-doc2md if not already installed
+          cargo install cargo-doc2md
+          
+          # Clone the wavs-wasi-utils repo
+          git clone https://github.com/Lay3rLabs/wavs-wasi-utils.git
+          cd wavs-wasi-utils
+          
+          # Generate markdown docs
+          cargo doc2md > ../public/wavs-wasi-utils.md
+          
+          # Clean up
+          cd ..
+          rm -rf wavs-wasi-utils
+
       - name: Commit and push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add public/wavs-foundry-template.md
-          git commit -m "Update Repomix documentation" || exit 0
+          git add public/wavs-foundry-template.md public/wavs-wasi-utils.md
+          git commit -m "Update documentation" || exit 0
           git push
