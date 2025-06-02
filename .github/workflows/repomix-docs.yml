@@ -46,13 +46,23 @@ jobs:
           # Generate rustdoc JSON for wavs-wasi-utils
           echo "Generating rustdoc JSON for wavs-wasi-utils..."
           cd packages/wavs-wasi-utils
-          RUSTC_BOOTSTRAP=1 RUSTDOCFLAGS="-Z unstable-options --output-format json" cargo doc --document-private-items --no-deps
+          
+          # Create target directory if it doesn't exist
+          mkdir -p target/doc
+          
+          # Generate documentation with explicit output path
+          RUSTC_BOOTSTRAP=1 RUSTDOCFLAGS="-Z unstable-options --output-format json --output target/doc/wavs_wasi_utils.json" cargo doc --document-private-items --no-deps
+
+          # List contents of target/doc to debug
+          echo "Contents of target/doc:"
+          ls -la target/doc/
 
           # Convert to Markdown
           if [ -f "target/doc/wavs_wasi_utils.json" ]; then
+            echo "Found JSON file, converting to Markdown..."
             rustdoc-md --path target/doc/wavs_wasi_utils.json --output ../../../public/wavs-wasi-utils.md
           else
-            echo "wavs_wasi_utils.json not found."
+            echo "wavs_wasi_utils.json not found in target/doc/"
             exit 1
           fi
 
