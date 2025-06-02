@@ -1,3 +1,5 @@
+Source: https://github.com/Lay3rLabs/wavs-foundry-template
+
 This file is a merged representation of the entire codebase, combined into a single document by Repomix.
 
 # File Summary
@@ -381,7 +383,8 @@ main() {
         found_docker=$(grep -P -o "$GREP_PATTERN" $file)
         if [[ ! -z $found_docker ]]; then
             # ensure found_docker is split on new lines to each their own array components (some files may have multiple references)
-            IFS=$'\n' read -rd '' -a found_docker_array <<< "$found_docker"
+            IFS=$'
+' read -rd '' -a found_docker_array <<< "$found_docker"
             for i in "${found_docker_array[@]}"; do
                 if [[ $DEBUGGING == "true" ]]; then
                     echo "Found in $file: $i"
@@ -430,7 +433,8 @@ test_data() {
 
     # Find all matches_set with line numbers (-n) and print the pattern at the top
     echo "Pattern being used: $GREP_PATTERN"
-    echo -e "\nmatches_set found:"
+    echo -e "
+matches_set found:"
     echo "$TEST_DATA" | grep -P -o "$GREP_PATTERN"
 }
 
@@ -1288,38 +1292,52 @@ pub(crate) use __export_layer_trigger_world_impl as export;
 #[link_section = "component-type:wit-bindgen:0.36.0:wavs:worker@0.3.0:layer-trigger-world:encoded world"]
 #[doc(hidden)]
 pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 1580] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xa2\x0b\x01A\x02\x01\
-A\x0e\x01B#\x01r\x02\x0bbech32-addrs\x0aprefix-leny\x04\0\x0ecosmos-address\x03\0\
-\0\x01o\x02ss\x01p\x02\x01r\x02\x02tys\x0aattributes\x03\x04\0\x0ccosmos-event\x03\
-\0\x04\x01ks\x01r\x07\x08chain-ids\x0crpc-endpoint\x06\x0dgrpc-endpoint\x06\x11g\
-rpc-web-endpoint\x06\x09gas-pricev\x09gas-denoms\x0dbech32-prefixs\x04\0\x13cosm\
-os-chain-config\x03\0\x07\x01p}\x01r\x01\x09raw-bytes\x09\x04\0\x0beth-address\x03\
-\0\x0a\x01p\x09\x01r\x02\x06topics\x0c\x04data\x09\x04\0\x12eth-event-log-data\x03\
-\0\x0d\x01r\x03\x08chain-ids\x0bws-endpoint\x06\x0dhttp-endpoint\x06\x04\0\x10et\
-h-chain-config\x03\0\x0f\x01r\x03\x07address\x0b\x0achain-names\x0aevent-hash\x09\
-\x04\0!trigger-source-eth-contract-event\x03\0\x11\x01r\x03\x07address\x01\x0ach\
-ain-names\x0aevent-types\x04\0$trigger-source-cosmos-contract-event\x03\0\x13\x01\
-q\x03\x12eth-contract-event\x01\x12\0\x15cosmos-contract-event\x01\x14\0\x06manu\
-al\0\0\x04\0\x0etrigger-source\x03\0\x15\x01r\x03\x0aservice-ids\x0bworkflow-ids\
-\x0etrigger-source\x16\x04\0\x0etrigger-config\x03\0\x17\x01r\x04\x10contract-ad\
-dress\x0b\x0achain-names\x03log\x0e\x0cblock-heightw\x04\0\x1ftrigger-data-eth-c\
-ontract-event\x03\0\x19\x01r\x04\x10contract-address\x01\x0achain-names\x05event\
-\x05\x0cblock-heightw\x04\0\"trigger-data-cosmos-contract-event\x03\0\x1b\x01q\x03\
-\x12eth-contract-event\x01\x1a\0\x15cosmos-contract-event\x01\x1c\0\x03raw\x01\x09\
-\0\x04\0\x0ctrigger-data\x03\0\x1d\x01r\x02\x06config\x18\x04data\x1e\x04\0\x0et\
-rigger-action\x03\0\x1f\x01q\x05\x05error\0\0\x04warn\0\0\x04info\0\0\x05debug\0\
-\0\x05trace\0\0\x04\0\x09log-level\x03\0!\x03\0\x1dwavs:worker/layer-types@0.3.0\
-\x05\0\x02\x03\0\0\x0etrigger-action\x03\0\x0etrigger-action\x03\0\x01\x02\x03\0\
-\0\x10eth-chain-config\x02\x03\0\0\x13cosmos-chain-config\x02\x03\0\0\x09log-lev\
-el\x01B\x0e\x02\x03\x02\x01\x03\x04\0\x10eth-chain-config\x03\0\0\x02\x03\x02\x01\
-\x04\x04\0\x13cosmos-chain-config\x03\0\x02\x02\x03\x02\x01\x05\x04\0\x09log-lev\
-el\x03\0\x04\x01k\x01\x01@\x01\x0achain-names\0\x06\x04\0\x14get-eth-chain-confi\
-g\x01\x07\x01k\x03\x01@\x01\x0achain-names\0\x08\x04\0\x17get-cosmos-chain-confi\
-g\x01\x09\x01@\x02\x05level\x05\x07messages\x01\0\x04\0\x03log\x01\x0a\x03\0\x04\
-host\x05\x06\x01p}\x01k\x07\x01j\x01\x08\x01s\x01@\x01\x0etrigger-action\x02\0\x09\
-\x04\0\x03run\x01\x0a\x04\0%wavs:worker/layer-trigger-world@0.3.0\x04\0\x0b\x19\x01\
-\0\x13layer-trigger-world\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit\
--component\x070.220.0\x10wit-bindgen-rust\x060.36.0";
+ asm   wit-component-encoding ¢A\
+AB#rbech32-addrs
+prefix-leny cosmos-address \
+ ossprtys
+attributes cosmos-event\
+ ksrchain-idsrpc-endpointgrpc-endpointg\
+rpc-web-endpoint	gas-pricev	gas-denomsbech32-prefixs cosm\
+os-chain-config p}r	raw-bytes	 eth-address\
+ 
+p	rtopicsdata	 eth-event-log-data\
+ rchain-idsws-endpointhttp-endpoint et\
+h-chain-config raddress
+chain-names
+event-hash	\
+ !trigger-source-eth-contract-event raddress
+ch\
+ain-names
+event-types $trigger-source-cosmos-contract-event \
+qeth-contract-event cosmos-contract-event manu\
+al   trigger-source r
+service-idsworkflow-ids\
+trigger-source trigger-config rcontract-ad\
+dress
+chain-nameslogblock-heightw trigger-data-eth-c\
+ontract-event rcontract-address
+chain-namesevent\
+block-heightw \"trigger-data-cosmos-contract-event q\
+eth-contract-event cosmos-contract-event raw	\
+  trigger-data rconfigdata t\
+rigger-action qerror  warn  info  debug \
+ trace   	log-level ! wavs:worker/layer-types@0.3.0\
+   trigger-action trigger-action  \
+ eth-chain-config  cosmos-chain-config  	log-lev\
+elB eth-chain-config  \
+ cosmos-chain-config  	log-lev\
+el k@
+chain-names  get-eth-chain-confi\
+gk@
+chain-names  get-cosmos-chain-confi\
+g	@levelmessages  log
+ \
+hostp}kjs@trigger-action 	\
+ run
+ %wavs:worker/layer-trigger-world@0.3.0 \
+ layer-trigger-world   G	producersprocessed-bywit\
+-component0.220.0wit-bindgen-rust0.36.0";
 #[inline(never)]
 #[doc(hidden)]
 pub fn __link_custom_section_describing_imports() {
