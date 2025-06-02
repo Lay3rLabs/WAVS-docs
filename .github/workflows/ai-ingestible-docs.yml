@@ -26,8 +26,11 @@ jobs:
       - name: Install Repomix
         run: npm install -g repomix
 
-      # - name: Generate WAVS Foundry Template Documentation
-      #   run: repomix --remote Lay3rLabs/wavs-foundry-template -o public/wavs-foundry-template.md --style markdown
+      - name: Generate WAVS Foundry Template Documentation
+        run: |
+          repomix --remote Lay3rLabs/wavs-foundry-template -o public/wavs-foundry-template.md --style markdown
+          # Add source URL at the top of the file
+          echo -e "Source: https://github.com/Lay3rLabs/wavs-foundry-template\n\n$(cat public/wavs-foundry-template.md)" > public/wavs-foundry-template.md
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -58,6 +61,9 @@ jobs:
           if [ -f "target/doc/wavs_wasi_utils.json" ]; then
             echo "Found JSON file, converting to Markdown..."
             rustdoc-md --path target/doc/wavs_wasi_utils.json --output ../../../public/wavs-wasi-utils.md
+            
+            # Add source URL at the top of the file
+            echo -e "Source: https://docs.rs/wavs-wasi-utils/latest/wavs_wasi_utils/\n\n$(cat ../../../public/wavs-wasi-utils.md)" > ../../../public/wavs-wasi-utils.md
           else
             echo "wavs_wasi_utils.json not found in target/doc/"
             echo "Contents of target/:"
@@ -73,6 +79,6 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add public/wavs-wasi-utils.md
+          git add public/wavs-wasi-utils.md public/wavs-foundry-template.md
           git commit -m "Update documentation" || exit 0
           git push
