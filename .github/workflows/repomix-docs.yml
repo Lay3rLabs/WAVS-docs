@@ -26,8 +26,8 @@ jobs:
       - name: Install Repomix
         run: npm install -g repomix
 
-      - name: Generate WAVS Foundry Template Documentation
-        run: repomix --remote Lay3rLabs/wavs-foundry-template -o public/wavs-foundry-template.md --style markdown
+      # - name: Generate WAVS Foundry Template Documentation
+      #   run: repomix --remote Lay3rLabs/wavs-foundry-template -o public/wavs-foundry-template.md --style markdown
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -85,6 +85,6 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add public/wavs-foundry-template.md public/wavs-wasi-utils.md
+          git add public/wavs-wasi-utils.md
           git commit -m "Update documentation" || exit 0
           git push
