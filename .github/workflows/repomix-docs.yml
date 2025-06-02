@@ -34,99 +34,57 @@ jobs:
         with:
           components: rustfmt
 
-      - name: Install Pandoc
-        run: sudo apt-get update && sudo apt-get install -y pandoc
+      - name: Install rustdoc-md
+        run: cargo install rustdoc-md
 
       - name: Generate Rust Crate Documentation
         run: |
           # Clone the wavs-wasi repo using the token
           git clone https://${{ secrets.DOCS_PAT }}@github.com/Lay3rLabs/wavs-wasi.git
-          cd wavs-wasi/packages/wavs-wasi-utils
+          cd wavs-wasi
 
-          # Build the docs
-          echo "Building docs with cargo..."
-          cargo doc --no-deps
+          # Generate rustdoc JSON for wavs-wasi-utils
+          echo "Generating rustdoc JSON for wavs-wasi-utils..."
+          cd packages/wavs-wasi-utils
+          RUSTC_BOOTSTRAP=1 RUSTDOCFLAGS="-Z unstable-options --output-format json" cargo doc --document-private-items --no-deps
 
-          # Create temporary directory for markdown files
-          TEMP_DIR=$(mktemp -d)
-          echo "Created temp directory: $TEMP_DIR"
+          # Convert to Markdown
+          if [ -f "target/doc/wavs_wasi_utils.json" ]; then
+            rustdoc-md --path target/doc/wavs_wasi_utils.json --output ../../../public/wavs-wasi-utils.md
+          else
+            echo "wavs_wasi_utils.json not found."
+            exit 1
+          fi
 
-          # Convert and concatenate Markdown
-          DOC_DIR="../../target/doc/wavs_wasi_utils"
-          echo "Converting HTML docs to Markdown..."
-
-          find "$DOC_DIR" -name "*.html" | sort | while read -r html_file; do
-            echo "Processing: $html_file"
-            clean_name=$(basename "$html_file" .html | sed 's/fn\.//' | sed 's/macro\.//')
-            md_file="$TEMP_DIR/$clean_name.md"
-            if [[ "$html_file" == *"/fn."* ]]; then
-              echo "## Function: $clean_name" > "$md_file"
-            elif [[ "$html_file" == *"/macro."* ]]; then
-              echo "## Macro: $clean_name" > "$md_file"
-            elif [[ "$html_file" == *"/index.html" ]]; then
-              echo "# Module: $(dirname "$html_file" | xargs basename)" > "$md_file"
-            else
-              echo "## $clean_name" > "$md_file"
-            fi
-            echo "" >> "$md_file"
-            pandoc "$html_file" -f html -t markdown --wrap=none >> "$md_file"
-          done
-
-          # Concatenate all markdown files
-          echo "Concatenating Markdown files..."
-          cat "$TEMP_DIR"/*.md > ../../../public/wavs-wasi-utils.md
-
-          # Clean up
+          # Clean up wavs-wasi
           cd ../../..
-          rm -rf wavs-wasi "$TEMP_DIR"
+          rm -rf wavs-wasi
 
-      - name: Generate wavs-types Documentation
-        run: |
-          # Clone the wavs-types repo using the token
-          git clone https://${{ secrets.DOCS_PAT }}@github.com/Lay3rLabs/wavs-types.git
-          cd wavs-types
+          # # Clone the wavs-foundry-template repo
+          # git clone https://${{ secrets.DOCS_PAT }}@github.com/Lay3rLabs/wavs-foundry-template.git
+          # cd wavs-foundry-template
 
-          # Build the docs
-          echo "Building docs with cargo..."
-          cargo doc --no-deps
+          # # Generate rustdoc JSON for evm-price-oracle
+          # echo "Generating rustdoc JSON for evm-price-oracle..."
+          # cd components/evm-price-oracle
+          # RUSTC_BOOTSTRAP=1 RUSTDOCFLAGS="-Z unstable-options --output-format json" cargo doc --document-private-items --no-deps
 
-          # Create temporary directory for markdown files
-          TEMP_DIR=$(mktemp -d)
-          echo "Created temp directory: $TEMP_DIR"
+          # # Convert to Markdown
+          # if [ -f "target/doc/evm_price_oracle.json" ]; then
+          #   rustdoc-md --path target/doc/evm_price_oracle.json --output ../../../public/evm-price-oracle.md
+          # else
+          #   echo "evm_price_oracle.json not found."
+          #   exit 1
+          # fi
 
-          # Convert and concatenate Markdown
-          DOC_DIR="target/doc/wavs_types"
-          echo "Converting HTML docs to Markdown..."
-
-          find "$DOC_DIR" -name "*.html" | sort | while read -r html_file; do
-            echo "Processing: $html_file"
-            clean_name=$(basename "$html_file" .html | sed 's/fn\.//' | sed 's/macro\.//')
-            md_file="$TEMP_DIR/$clean_name.md"
-            if [[ "$html_file" == *"/fn."* ]]; then
-              echo "## Function: $clean_name" > "$md_file"
-            elif [[ "$html_file" == *"/macro."* ]]; then
-              echo "## Macro: $clean_name" > "$md_file"
-            elif [[ "$html_file" == *"/index.html" ]]; then
-              echo "# Module: $(dirname "$html_file" | xargs basename)" > "$md_file"
-            else
-              echo "## $clean_name" > "$md_file"
-            fi
-            echo "" >> "$md_file"
-            pandoc "$html_file" -f html -t markdown --wrap=none >> "$md_file"
-          done
-
-          # Concatenate all markdown files
-          echo "Concatenating Markdown files..."
-          cat "$TEMP_DIR"/*.md > ../public/wavs-types.md
-
-          # Clean up
-          cd ..
-          rm -rf wavs-types "$TEMP_DIR"
+          # # Clean up wavs-foundry-template
+          # cd ../../..
+          # rm -rf wavs-foundry-template
 
       - name: Commit and push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add public/wavs-foundry-template.md public/wavs-wasi-utils.md public/wavs-types.md
+          git add public/wavs-foundry-template.md public/wavs-wasi-utils.md
           git commit -m "Update documentation" || exit 0
           git push
