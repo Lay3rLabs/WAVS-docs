@@ -47,11 +47,8 @@ jobs:
           echo "Generating rustdoc JSON for wavs-wasi-utils..."
           cd packages/wavs-wasi-utils
           
-          # Create target directory if it doesn't exist
-          mkdir -p target/doc
-          
           # Generate documentation with JSON output
-          RUSTC_BOOTSTRAP=1 RUSTDOCFLAGS="-Z unstable-options --output-format json" cargo doc --document-private-items --no-deps
+          RUSTC_BOOTSTRAP=1 RUSTDOCFLAGS="-Z unstable-options --output-format json" cargo doc --document-private-items --no-deps --target-dir target
 
           # List contents of target/doc to debug
           echo "Contents of target/doc:"
@@ -63,33 +60,14 @@ jobs:
             rustdoc-md --path target/doc/wavs_wasi_utils.json --output ../../../public/wavs-wasi-utils.md
           else
             echo "wavs_wasi_utils.json not found in target/doc/"
+            echo "Contents of target/:"
+            ls -R target/
             exit 1
           fi
 
           # Clean up wavs-wasi
           cd ../../..
           rm -rf wavs-wasi
-
-          # # Clone the wavs-foundry-template repo
-          # git clone https://${{ secrets.DOCS_PAT }}@github.com/Lay3rLabs/wavs-foundry-template.git
-          # cd wavs-foundry-template
-
-          # # Generate rustdoc JSON for evm-price-oracle
-          # echo "Generating rustdoc JSON for evm-price-oracle..."
-          # cd components/evm-price-oracle
-          # RUSTC_BOOTSTRAP=1 RUSTDOCFLAGS="-Z unstable-options --output-format json" cargo doc --document-private-items --no-deps
-
-          # # Convert to Markdown
-          # if [ -f "target/doc/evm_price_oracle.json" ]; then
-          #   rustdoc-md --path target/doc/evm_price_oracle.json --output ../../../public/evm-price-oracle.md
-          # else
-          #   echo "evm_price_oracle.json not found."
-          #   exit 1
-          # fi
-
-          # # Clean up wavs-foundry-template
-          # cd ../../..
-          # rm -rf wavs-foundry-template
 
       - name: Commit and push changes
         run: |
