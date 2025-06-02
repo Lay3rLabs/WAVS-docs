@@ -50,8 +50,8 @@ jobs:
           # Create target directory if it doesn't exist
           mkdir -p target/doc
           
-          # Generate documentation with explicit output path
-          RUSTC_BOOTSTRAP=1 RUSTDOCFLAGS="-Z unstable-options --output-format json --output target/doc/wavs_wasi_utils.json" cargo doc --document-private-items --no-deps
+          # Generate documentation with JSON output
+          RUSTC_BOOTSTRAP=1 RUSTDOCFLAGS="-Z unstable-options --output-format json" cargo doc --document-private-items --no-deps
 
           # List contents of target/doc to debug
           echo "Contents of target/doc:"
