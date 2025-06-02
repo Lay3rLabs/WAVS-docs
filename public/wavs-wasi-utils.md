@@ -1,3 +1,5 @@
+Source: https://docs.rs/wavs-wasi-utils/latest/wavs_wasi_utils/
+
 # Crate Documentation
 
 **Version:** 0.4.0-beta.4
@@ -154,4 +156,3 @@ pub macro_rules! decode_event_log_data {
 } */
 }
 ```
-
