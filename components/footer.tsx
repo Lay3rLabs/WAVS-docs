@@ -41,6 +41,14 @@ export const Footer = () => {
             Sitemap
           </Link>
           <Link
+            href="/llms-full.txt"
+            className="hover:text-gray-900 dark:hover:text-white"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            LLM Docs
+          </Link>
+          <Link
             href="https://layer.xyz"
             className="hover:text-gray-900 dark:hover:text-white"
             target="_blank"
