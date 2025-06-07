@@ -64,13 +64,13 @@ import {Layers, Microscope } from 'lucide-react';
     icon={<Layers />}
     href="/about"
     title="About"
-    description="Learn about Layer"
+    description="Learn about WAVS"
   />
     <Card
     icon={<Microscope />}
     href="/how-it-works"
     title="How it works"
-    description="Discover how Layer works"
+    description="Discover how WAVS works"
   />
 </Cards>
 
