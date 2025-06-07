@@ -1,0 +1,5 @@
+{
+    "title": "Components",
+    "pages": [ "component", "variables", "network-requests", "blockchain-interactions" ],
+    "defaultOpen": true
+}
