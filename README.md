@@ -11,6 +11,22 @@ npm i
 npm run dev
 ```
 
+## Link Checking
+
+To check for broken links in the documentation:
+
+```
+npm run check-links
+```
+
+This command will:
+1. Kill any existing server on port 3000
+2. Start a new dev server
+3. Check all internal links
+4. Kill the server when done
+
+The link checker is also integrated into the build process (`npm run build`), ensuring no broken links make it to production.
+
 These docs were created using [Fumadocs](https://fumadocs.vercel.app/docs/ui).
 
 ## Updating the theme
