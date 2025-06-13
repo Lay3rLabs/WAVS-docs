@@ -6,6 +6,7 @@
     "build": "rm -rf dsource-wavs-foundry-template || true; next build",
     "postbuild": "next-sitemap",
     "dev": "next dev",
+    "check-links": "lsof -ti:3000 | xargs kill -9 || true; next dev -p 3000 & sleep 5 && node scripts/check-links.js && kill $!",
     "start": "next start"
   },
   "dependencies": {
@@ -33,6 +34,8 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.19",
+    "broken-link-checker": "^0.7.8",
+    "chalk": "^4.1.2",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.4.5"
