@@ -1,0 +1,4 @@
+{
+    "title": "WAVS builders handbook",
+    "pages": [ "overview", "../design",  "template", "commands", "ai","service", "workflows", "triggers", "components", "submission"]
+}
