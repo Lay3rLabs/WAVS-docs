@@ -23,7 +23,7 @@ The following dependencies are commonly required in your component's `Cargo.toml
 [dependencies]
 # Core WAVS blockchain functionality
 wit-bindgen-rt = { workspace = true, features = ["bitflags"] }  # Required for WASI bindings
-wavs-wasi-utils = "0.4.0-beta.4"                                # Blockchain interaction utilities
+wavs-wasi-utils = "0.4.0"                                # Blockchain interaction utilities
 wstd = "0.5.3"                                                  # WASI standard library
 
 # Alloy crates for Ethereum interaction
@@ -213,9 +213,8 @@ The Alloy ecosystem provides a comprehensive set of crates for Ethereum developm
 
 ### Utility crates
 
-Common utility crates for WAVS components:
+Essential utility crates for WAVS components:
 
 - [`wstd`](https://docs.rs/wstd/latest/wstd/): WASI standard library with `block_on` for async operations
 - [`serde`](https://docs.rs/serde/latest/serde/)/[`serde_json`](https://docs.rs/serde_json/latest/serde_json/): Data serialization and JSON handling
 - [`anyhow`](https://docs.rs/anyhow/latest/anyhow/): Error handling and propagation
-- [`chronos`](https://docs.rs/chronos/latest/chronos/): Time and date handling library for Rust
