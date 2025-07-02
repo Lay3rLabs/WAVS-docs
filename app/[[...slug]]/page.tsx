@@ -1,7 +1,8 @@
 import { getPage, getPages } from "@/app/source";
 import type { Metadata } from "next";
-import { DocsPage, DocsBody } from "fumadocs-ui/page";
+import { DocsBody, DocsPage as FumadocsPage } from "fumadocs-ui/page";
 import { notFound } from "next/navigation";
+import { OpenInLLM } from "@/components/open-in-llm";
 
 export default async function Page({
   params,
@@ -28,12 +29,15 @@ export default async function Page({
   });
 
   return (
-    <DocsPage full={isFull} toc={updatedToc}>
+    <FumadocsPage full={isFull} toc={updatedToc}>
       <DocsBody>
+        <div className="flex justify-end mb-6">
+          <OpenInLLM />
+        </div>
         <h1>{page.data.title}</h1>
         <MDX />
       </DocsBody>
-    </DocsPage>
+    </FumadocsPage>
   );
 }
 

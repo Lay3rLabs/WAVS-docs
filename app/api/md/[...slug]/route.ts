@@ -26,14 +26,26 @@ function processMdxToMarkdown(content: string): string {
   // Remove imports
   content = content.replace(/import[\s\S]*?from .*?;/g, '');
   
+  // Handle Cards container
+  content = content.replace(/<Cards>([\s\S]*?)<\/Cards>/g, (_, cardsContent) => {
+    return cardsContent;
+  });
+  
+  // Handle Card components with href attribute
+  content = content.replace(/<Card\s+[^>]*?href=["']([^"']*?)["'][^>]*?title=["']([^"']*?)["'][^>]*?description=["']([^"']*?)["'][^>]*?(?:\/|><\/Card>)/g, 
+    (_, href, title, description) => {
+    return `\n### [${title}](${href})\n${description}\n`;
+  });
+  
+  // Handle Card components with title first
+  content = content.replace(/<Card\s+[^>]*?title=["']([^"']*?)["'][^>]*?href=["']([^"']*?)["'][^>]*?description=["']([^"']*?)["'][^>]*?(?:\/|><\/Card>)/g, 
+    (_, title, href, description) => {
+    return `\n### [${title}](${href})\n${description}\n`;
+  });
+  
   // Handle common MDX components
   content = content.replace(/<Callout.*?title="(.*?)".*?>([\s\S]*?)<\/Callout>/g, (_, title, body) => {
     return `\n> **${title}:** ${body.trim()}\n`;
-  });
-  
-  // Handle Card component - both self-closing and with children
-  content = content.replace(/<Card.*?title="(.*?)".*?description="(.*?)".*?\/>/g, (_, title, description) => {
-    return `\n**${title}**: ${description}\n`;
   });
   
   // Preserve image tags before removing other HTML
@@ -52,7 +64,7 @@ function processMdxToMarkdown(content: string): string {
     return `![Image](${src})`;
   });
   
-  // Handle JSX components
+  // Handle JSX components with closing tags
   content = content.replace(/<(\w+)([^>]*)>([\s\S]*?)<\/\1>/g, (_, tag, attrs, content) => {
     return content;
   });
@@ -70,16 +82,29 @@ export async function GET(
   const slugParts = params.slug;
   console.log('MD route called with slug parts:', slugParts);
   
-  const page = getPage(slugParts);
-  if (!page) {
-    return NextResponse.json({ 
-      error: 'Page not found',
-      slugParts
-    }, { status: 404 });
+  // Special case for the index page
+  const isIndexRequest = 
+    (slugParts.length === 2 && slugParts[0] === 'docs' && slugParts[1] === 'index');
+  
+  let page;
+  let contentPath;
+  
+  if (isIndexRequest) {
+    // Direct path to index.mdx for the special case
+    contentPath = path.join(process.cwd(), 'content/docs/index.mdx');
+  } else {
+    // Normal page lookup via getPage
+    page = getPage(slugParts);
+    if (!page) {
+      return NextResponse.json({ 
+        error: 'Page not found',
+        slugParts
+      }, { status: 404 });
+    }
+    contentPath = path.join(process.cwd(), 'content/docs', page.file.path.replace(/^docs\//, ''));
   }
   
   // Get the content
-  const contentPath = path.join(process.cwd(), 'content/docs', page.file.path.replace(/^docs\//, ''));
   const content = await readMdxFile(contentPath);
   const markdownContent = processMdxToMarkdown(content);
   
