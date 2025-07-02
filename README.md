@@ -33,6 +33,7 @@ These docs were created using [Fumadocs](https://fumadocs.vercel.app/docs/ui).
 
 This documentation site offers machine-readable formats that make it easy for AI assistants and tools to access the content:
 
+- `https://docs.wavs.xyz/llms.txt` - Structured index of documentation organized by sections with titles, URLs, and descriptions
 - `https://docs.wavs.xyz/llms-full.txt` - All documentation in a single text file
 
 - Append `.md` to any page URL to get it in standard Markdown format:
