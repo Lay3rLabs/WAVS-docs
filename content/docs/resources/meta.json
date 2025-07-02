@@ -1,5 +1,5 @@
 {
     
     "title": "Resources",
-    "pages": [ "[Awesome-WAVS](https://github.com/Lay3rLabs/awesome-WAVS)", "[WAVS Foundry Template](https://github.com/Lay3rLabs/wavs-foundry-template)", "[WAVS-Types Docs](https://docs.rs/wavs-types/0.3.0-alpha5/wavs_types/struct.Service.html)", "[Demo Repo](https://github.com/Lay3rLabs/wavs-demos)"]
+    "pages": [ "[Awesome-WAVS](https://github.com/Lay3rLabs/awesome-WAVS)", "[WAVS Foundry Template](https://github.com/Lay3rLabs/wavs-foundry-template)", "[WAVS Utils](https://docs.rs/wavs-wasi-utils/latest/wavs_wasi_utils/index.html)", "[WAVS-Types Docs](https://docs.rs/wavs-types/0.3.0-alpha5/wavs_types/struct.Service.html)"]
 }
