@@ -1,7 +1,7 @@
-import { getPage } from '@/app/source';
+import { getPage, getPages } from '@/app/source';
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -79,39 +79,67 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { slug: string[] } }
 ) {
-  const slugParts = params.slug;
-  console.log('MD route called with slug parts:', slugParts);
-  
-  // Special case for the index page
-  const isIndexRequest = 
-    (slugParts.length === 2 && slugParts[0] === 'docs' && slugParts[1] === 'index');
-  
-  let page;
-  let contentPath;
-  
-  if (isIndexRequest) {
-    // Direct path to index.mdx for the special case
-    contentPath = path.join(process.cwd(), 'content/docs/index.mdx');
-  } else {
-    // Normal page lookup via getPage
-    page = getPage(slugParts);
-    if (!page) {
+  try {
+    const slugParts = params.slug;
+    console.log('MD route called with slug parts:', slugParts);
+    console.log('User-Agent:', request.headers.get('user-agent'));
+    
+    // Special case for the index page
+    const isIndexRequest = 
+      (slugParts.length === 2 && slugParts[0] === 'docs' && slugParts[1] === 'index');
+    
+    let page;
+    let contentPath;
+    
+    if (isIndexRequest) {
+      // Direct path to index.mdx for the special case
+      contentPath = path.join(process.cwd(), 'content/docs/index.mdx');
+      console.log('Using index path:', contentPath);
+    } else {
+      // Normal page lookup via getPage
+      // Remove 'docs' prefix if present
+      const pageSlug = slugParts[0] === 'docs' ? slugParts.slice(1) : slugParts;
+      console.log('Looking up page with pageSlug:', pageSlug);
+      page = getPage(pageSlug);
+      console.log('Page found:', page ? 'yes' : 'no');
+      
+      if (!page) {
+        console.log('Page not found for pageSlug:', pageSlug);
+        return NextResponse.json({ 
+          error: 'Page not found',
+          slugParts,
+          pageSlug,
+          availablePages: getPages().map(p => p.url)
+        }, { status: 404 });
+      }
+      contentPath = path.join(process.cwd(), 'content/docs', page.file.path.replace(/^docs\//, ''));
+      console.log('Using content path:', contentPath);
+    }
+    
+    // Get the content
+    const content = await readMdxFile(contentPath);
+    if (!content) {
+      console.log('No content found at path:', contentPath);
       return NextResponse.json({ 
-        error: 'Page not found',
-        slugParts
+        error: 'Content not found',
+        contentPath
       }, { status: 404 });
     }
-    contentPath = path.join(process.cwd(), 'content/docs', page.file.path.replace(/^docs\//, ''));
+    
+    const markdownContent = processMdxToMarkdown(content);
+    
+    return new NextResponse(markdownContent, {
+      headers: {
+        'Content-Type': 'text/markdown',
+        'Content-Disposition': `inline; filename="${slugParts.join('-')}.md"`,
+      },
+    });
+  } catch (error) {
+    console.error('Error in MD route:', error);
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error',
+      slugParts: params.slug
+    }, { status: 500 });
   }
-  
-  // Get the content
-  const content = await readMdxFile(contentPath);
-  const markdownContent = processMdxToMarkdown(content);
-  
-  return new NextResponse(markdownContent, {
-    headers: {
-      'Content-Type': 'text/markdown',
-      'Content-Disposition': `inline; filename="${slugParts.join('-')}.md"`,
-    },
-  });
 }
