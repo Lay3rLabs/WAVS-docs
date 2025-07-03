@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
-import { ChevronDown, ExternalLink, Copy, FileText, Book } from 'lucide-react';
+import { ChevronDown, ExternalLink, Copy, FileText, Book, ScrollText, NotepadTextDashed, NotebookText, Map, WandSparkles, Sparkles } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useMediaQuery } from './hooks/use-media-query';
 import Image from 'next/image';
@@ -110,17 +110,8 @@ export const OpenInLLM = () => {
           <button 
             className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-[hsl(var(--text-secondary))] bg-[hsl(var(--background-secondary))] hover:text-[hsl(var(--text-accent))] hover:bg-[hsl(var(--background-accent))] transition-colors border border-[hsl(var(--border-primary))] shadow-sm"
           >
-            {isMobile ? (
-              <>
-                <Book size={18} />
-                <ChevronDown size={16} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-              </>
-            ) : (
-              <>
-                <span>Open in LLM</span>
-                <ChevronDown size={16} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-              </>
-            )}
+            <Sparkles size={18} />
+            <ChevronDown size={16} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
           </button>
         </CollapsibleTrigger>
         <CollapsibleContent className="absolute right-0 top-full z-50 mt-1 w-64 rounded-lg bg-[hsl(var(--background-base))] p-1 shadow-lg border border-[hsl(var(--border-primary))]">
@@ -129,7 +120,7 @@ export const OpenInLLM = () => {
               href={getClaudeUrl()}
               target="_blank"
               rel="noopener noreferrer" 
-              className="flex items-center gap-2 px-3 py-2.5 text-sm text-[hsl(var(--text-primary))] hover:bg-[hsl(var(--background-secondary))] no-underline"
+              className="flex items-center gap-2 px-3 py-2.5 text-sm text-[hsl(var(--text-primary))] hover:bg-[hsl(var(--background-accent))] hover:text-[hsl(var(--text-accent))] no-underline"
               onClick={() => setIsOpen(false)}
             >
               <span className="flex h-5 w-5 items-center justify-center">
@@ -153,7 +144,7 @@ export const OpenInLLM = () => {
               href={getChatGPTUrl()}
               target="_blank"
               rel="noopener noreferrer" 
-              className="flex items-center gap-2 px-3 py-2.5 text-sm text-[hsl(var(--text-primary))] hover:bg-[hsl(var(--background-secondary))] no-underline"
+              className="flex items-center gap-2 px-3 py-2.5 text-sm text-[hsl(var(--text-primary))] hover:bg-[hsl(var(--background-accent))] hover:text-[hsl(var(--text-accent))] no-underline"
               onClick={() => setIsOpen(false)}
             >
               <span className="flex h-5 w-5 items-center justify-center">
@@ -173,9 +164,15 @@ export const OpenInLLM = () => {
               <ExternalLink size={14} className="ml-auto opacity-70" />
             </a>
 
-            <button 
-              onClick={copyMarkdown}
-              className="flex w-full items-center gap-2 px-3 py-2.5 text-sm text-[hsl(var(--text-primary))] hover:bg-[hsl(var(--background-secondary))]"
+            <div className="h-px bg-[hsl(var(--border-primary))] my-1" />
+
+            <a 
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                copyMarkdown();
+              }}
+              className="flex items-center gap-2 px-3 py-2.5 text-sm text-[hsl(var(--text-primary))] hover:bg-[hsl(var(--background-accent))] hover:text-[hsl(var(--text-accent))] no-underline"
             >
               <span className="flex h-5 w-5 items-center justify-center">
                 <Copy size={16} />
@@ -185,13 +182,13 @@ export const OpenInLLM = () => {
                 <span className="text-xs text-[hsl(var(--text-tertiary))]">Copy page as plaintext</span>
               </div>
               <ExternalLink size={14} className="ml-auto opacity-0" />
-            </button>
+            </a>
             
             <a 
               href={mounted ? (isIndexPage ? `${window.location.origin}/api/md/docs/index` : markdownUrl) : '#'}
               target="_blank"
               rel="noopener noreferrer" 
-              className="flex items-center gap-2 px-3 py-2.5 text-sm text-[hsl(var(--text-primary))] hover:bg-[hsl(var(--background-secondary))] no-underline"
+              className="flex items-center gap-2 px-3 py-2.5 text-sm text-[hsl(var(--text-primary))] hover:bg-[hsl(var(--background-accent))] hover:text-[hsl(var(--text-accent))] no-underline"
               onClick={() => setIsOpen(false)}
             >
               <span className="flex h-5 w-5 items-center justify-center">
@@ -204,26 +201,71 @@ export const OpenInLLM = () => {
               <ExternalLink size={14} className="ml-auto opacity-70" />
             </a>
 
-            <div className="mt-2 px-3 py-2 border-t border-[hsl(var(--border-primary))]">
-              <div className="grid grid-cols-2 gap-2">
-                <a 
-                  href="/llms.txt"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex justify-center items-center gap-1 px-2 py-1.5 text-xs font-medium rounded-md text-[hsl(var(--text-primary))] bg-[hsl(var(--background-secondary))] hover:bg-[hsl(var(--background-primary))] no-underline border border-[hsl(var(--border-primary))] transition-colors"
-                >
-                  <span>llms.txt</span>
-                </a>
-                <a 
-                  href="/llms-full.txt"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex justify-center items-center gap-1 px-2 py-1.5 text-xs font-medium rounded-md text-[hsl(var(--text-primary))] bg-[hsl(var(--background-secondary))] hover:bg-[hsl(var(--background-primary))] no-underline border border-[hsl(var(--border-primary))] transition-colors"
-                >
-                  <span>llms-full.txt</span>
-                </a>
+            <div className="h-px bg-[hsl(var(--border-primary))] my-1" />
+
+            <a 
+              href="/llms.txt"
+              target="_blank"
+              rel="noopener noreferrer" 
+              className="flex items-center gap-2 px-3 py-2.5 text-sm text-[hsl(var(--text-primary))] hover:bg-[hsl(var(--background-accent))] hover:text-[hsl(var(--text-accent))] no-underline"
+              onClick={() => setIsOpen(false)}
+            >
+              <span className="flex h-5 w-5 items-center justify-center">
+                <Map size={16} />
+              </span>
+              <div className="flex flex-col">
+                <span>llms.txt</span>
+                <span className="text-xs text-[hsl(var(--text-tertiary))]">Docs index for AI</span>
               </div>
-            </div>
+              <ExternalLink size={14} className="ml-auto opacity-70" />
+            </a>
+
+            <a 
+              href="/llms-full.txt"
+              target="_blank"
+              rel="noopener noreferrer" 
+              className="flex items-center gap-2 px-3 py-2.5 text-sm text-[hsl(var(--text-primary))] hover:bg-[hsl(var(--background-accent))] hover:text-[hsl(var(--text-accent))] no-underline"
+              onClick={() => setIsOpen(false)}
+            >
+              <span className="flex h-5 w-5 items-center justify-center">
+                <NotebookText size={16} />
+              </span>
+              <div className="flex flex-col">
+                <span>Full Documentation</span>
+                <span className="text-xs text-[hsl(var(--text-tertiary))]">Complete docs as text</span>
+              </div>
+              <ExternalLink size={14} className="ml-auto opacity-70" />
+            </a>
+
+            <a 
+              href="/resources/llms"
+              className="flex items-center gap-2 px-3 py-2.5 text-sm text-[hsl(var(--text-primary))] hover:bg-[hsl(var(--background-accent))] hover:text-[hsl(var(--text-accent))] no-underline"
+              onClick={() => setIsOpen(false)}
+            >
+              <span className="flex h-5 w-5 items-center justify-center">
+                <Book size={16} />
+              </span>
+              <div className="flex flex-col">
+                <span>LLM Resouces</span>
+                <span className="text-xs text-[hsl(var(--text-tertiary))]">AI-friendly resources</span>
+              </div>
+              <ExternalLink size={14} className="ml-auto opacity-70" />
+            </a>
+
+            <a 
+              href="/handbook/ai"
+              className="flex items-center gap-2 px-3 py-2.5 text-sm text-[hsl(var(--text-primary))] hover:bg-[hsl(var(--background-accent))] hover:text-[hsl(var(--text-accent))] no-underline"
+              onClick={() => setIsOpen(false)}
+            >
+              <span className="flex h-5 w-5 items-center justify-center">
+                <WandSparkles size={16} />
+              </span>
+              <div className="flex flex-col">
+                <span>AI template</span>
+                <span className="text-xs text-[hsl(var(--text-tertiary))]">Create components with AI</span>
+              </div>
+              <ExternalLink size={14} className="ml-auto opacity-70" />
+            </a>
           </div>
         </CollapsibleContent>
       </Collapsible>

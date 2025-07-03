@@ -307,8 +307,14 @@ This is the official documentation site for WAVS, a next-generation AVS platform
 
 For a complete text version of all documentation pages, use https://docs.wavs.xyz/llms-full.txt
 
-## Searching
-Users can search the documentation using the search bar at the top of the site.
+## llm resources
+
+For more llm-ingestible docs, visit https://docs.wavs.xyz/resources/llms.md
+
+## Search API
+
+Search using the search API endpoint: curl "https://docs.wavs.xyz/api/search-custom?q=your_query"
+- returns JSON results with page titles, URLs, and content snippets.
 
 ## Contributions
 The documentation is open-source and accepts contributions. See the GitHub repository for contributing guidelines.
