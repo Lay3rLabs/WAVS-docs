@@ -2,9 +2,9 @@ Source: https://docs.rs/wavs-wasi-utils/latest/wavs_wasi_utils/
 
 # Crate Documentation
 
-**Version:** 0.4.0-beta.4
+**Version:** 0.5.0-alpha.1
 
-**Format Version:** 43
+**Format Version:** 45
 
 # Module `wavs_wasi_utils`
 
