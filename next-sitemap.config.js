@@ -33,25 +33,43 @@ module.exports = {
       priority: 0.6,
     });
     
-    // Dynamically add .md versions of all documentation pages for AI ingestion
-    try {
-      // Import the getPages function from your source
-      const { getPages } = require('./app/source');
-      const pages = getPages();
-      
-      // Add .md version of each page
-      pages.forEach(page => {
-        if (page.url) {
-          paths.push({
-            loc: `${page.url}.md`,
-            changefreq: 'daily',
-            priority: 0.7,
-          });
-        }
+    // Add .md versions of all documentation pages for AI ingestion
+    // Based on the current sitemap structure
+    const mdPages = [
+      '/benefits.md',
+      '/design.md',
+      '/handbook/ai.md',
+      '/handbook/commands.md',
+      '/handbook/components/blockchain-interactions.md',
+      '/handbook/components/component.md',
+      '/handbook/components/network-requests.md',
+      '/handbook/components/utilities.md',
+      '/handbook/components/variables.md',
+      '/handbook/overview.md',
+      '/handbook/service.md',
+      '/handbook/submission.md',
+      '/handbook/template.md',
+      '/handbook/triggers.md',
+      '/handbook/workflows.md',
+      '/how-it-works.md',
+      '/overview.md',
+      '/resources/llms.md',
+      '/tutorial/1-overview.md',
+      '/tutorial/2-setup.md',
+      '/tutorial/3-project.md',
+      '/tutorial/4-component.md',
+      '/tutorial/5-build.md',
+      '/tutorial/6-run-service.md',
+      '/tutorial/7-prediction.md',
+    ];
+    
+    mdPages.forEach(page => {
+      paths.push({
+        loc: page,
+        changefreq: 'daily',
+        priority: 0.7,
       });
-    } catch (error) {
-      console.warn('Could not dynamically load pages for sitemap:', error);
-    }
+    });
     
     return paths;
   }
