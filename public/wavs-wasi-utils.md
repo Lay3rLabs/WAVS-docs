@@ -2,7 +2,7 @@ Source: https://docs.rs/wavs-wasi-utils/latest/wavs_wasi_utils/
 
 # Crate Documentation
 
-**Version:** 0.5.0-alpha.1
+**Version:** 0.5.0-alpha.13
 
 **Format Version:** 45
 
