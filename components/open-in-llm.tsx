@@ -60,14 +60,14 @@ export const OpenInLLM = () => {
   // Function to create Claude URL
   const getClaudeUrl = () => {
     if (!mounted || typeof window === 'undefined') return '#';
-    const url = isIndexPage ? `${window.location.origin}/api/md/docs/index` : markdownUrl;
+    const url = isIndexPage ? `${window.location.origin}/docs` : currentUrl;
     return `https://claude.ai/new?q=${encodeURIComponent(`Read from ${url} so I can ask questions about it`)}`;
   };
 
   // Function to create ChatGPT URL
   const getChatGPTUrl = () => {
     if (!mounted || typeof window === 'undefined') return '#';
-    const url = isIndexPage ? `${window.location.origin}/api/md/docs/index` : markdownUrl;
+    const url = isIndexPage ? `${window.location.origin}/docs` : currentUrl;
     return `https://chatgpt.com/?hints=search&q=${encodeURIComponent(`Read from ${url} so I can ask questions about it`)}`;
   };
 
