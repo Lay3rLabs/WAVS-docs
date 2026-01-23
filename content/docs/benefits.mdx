@@ -7,28 +7,28 @@ import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 
 <img alt="WAVS" src="https://raw.githubusercontent.com/Lay3rLabs/WAVS-docs/refs/heads/main/public/banners/benefits.png" />
 
->WAVS is a platform that makes building AVSs easier.
+>WAVS is a platform that helps you ship verifiable apps faster.
 
-**The problem**: creating an AVS the traditional way is complicated. It requires a lot of preliminary development work, such as building custom contracts, scaffolding infrastructure, working with Dockerized components, and coordinating with operators. Most of the development centers around creating AVS infrastructure, which is generally more complicated than the core logic of the service itself.
+**The problem**: Developers building decentralized applications currently face an impossible choice: 
+- Run everything on-chain: Prohibitively expensive and slow
+- Rely on centralized servers: Defeats the purpose of decentralization
+- Build custom infrastructure: Months of scaffolding and work across separate bridges, oracles, and serverless functions
 
-**There is an easier way**: WAVS provides a base layer of AVS infrastructure so you can focus solely on creating the core logic of your service. This logic is written in Rust (with other languages available soon) and compiled as a lightweight WASI component which can be deployed to the WAVS platform and run as an AVS by operators. These components are run off-chain by operators in the WAVS (WASI-AVS) runtime at near-native speed, and the results are brought verifiably on-chain. A service of services, WAVS allows an AVS to dynamically run and manage multiple components that work together to build flexible and intelligent applications.
+
+Developing a verifiable app the traditional way is complicated. It requires a lot of preliminary development work, such as building custom contracts, scaffolding infrastructure, working with Dockerized components, and coordinating with operators. Most of the development centers around creating the app’s infrastructure, which is generally more complicated than the core logic of the service itself.
+
+**There is an easier way**: WAVS (Web Assembly Verifiable Services) provides an alternative: verifiable off-chain compute through a unified event-driven framework. WAVS simplifies bridges, oracles and other third party server functions into on-chain, offchain, and internal events. When an event is triggered, operators execute the application workflow as components in the WAVS engine and submit results to be verified on-chain. All of this happens natively within one all-in-one framework, making decentralized verifiable application development fast and simple.
+
+WAVS provides the layer of infrastructure so you can focus solely on creating the core logic of your service. Write logic in languages you already know (Rust, Golang, JavaScript/TypeScript, C/C+ or Python) and compiled as a lightweight WASI component which can be deployed to the WAVS Engine and run as a service by operators. These components are run offchain by operators in the WAVS runtime at near-native speed, and the results are brought verifiably on-chain. A service of services, WAVS allows verifiable apps to dynamically run and manage multiple components that work together to build flexible and intelligent applications.
 
 ## Why WAVS?
 
-WAVS redefines the AVS paradigm, making AVSs easier to build, less expensive to run, and enabling the next generation of composable, intelligent blockchain protocols.
 
-1. Dynamic and Cost-Effective Service Management
-    - Flexibility: Add, update, or manage components dynamically without having to coordinate upgrades with an entire operator set.
-    - Cost-effective and performant: Multiple AVSs run on the WAVS runtime
-        - WASI service components are lightweight compared to Docker, saving storage and startup time.
-        - WASI components have instantaneous initialization vs. Docker's redundant OS layers and slower boot times.
-2. Simplified Development
-    - Focus on your application logic, not overhead:
-        - With templates, there's no need to write multiple custom contracts to parse events or aggregate signatures.
-        - WAVS handles common AVS infrastructure, leaving AVS developers to focus on their core logic.
-3. Multichain Ready
-    - WAVS is built to operate across multiple blockchain environments and will be released with support for EVM networks.
-    - WAVS will foster a multichain ecosystem for AVSs to interact and interoperate.
-4. Intelligent Protocols & Composability
-    - Enable asynchronous, verifiable execution flows across multiple on and off-chain components.
-    - Compose multiple services to create dynamic intelligent protocols that surpass the limitations of traditional smart contracts.
+WAVS redefines the verifiable application infrastructure paradigm, making them easier to build, less expensive to run, and enabling the next generation of composable, intelligent blockchain services.
+
+**Speed**: Developers skip the boilerplate and focus on building their application so teams can ship fast. Quickly build application components with templates and built-in tooling for parsing events, aggregating signatures, and handling coordination logic. Developers can add, update, or modify components on the fly without coordinating changes across an entire operator set. Developers can build in languages they already know like Rust, Golang, JavaScript/TypeScript, or Python instead of being slowed down by new smart contract languages
+
+**Cost savings**: With WAVS, you don’t pay for three separate systems—oracles, bridge integrations, and 3rd party serverless functions are handled as first-class events in one framework. Your core logic runs in standard languages, so you can hire regular software engineers and you can choose the chain, security model, and deployment shape that makes sense for your budget and roadmap.
+
+**Peace of mind**: Build on WAVS confidently without worrying that you’re betting the company on the wrong stack. WAVS is designed to be reliable, portable, and adaptable, so your application logic isn’t trapped in one chain, one execution model, or one vendor’s roadmap. You can change chains, security models, and verification methods over time as your product grows without rewriting core logic. WAVS is open source with no lock-in, so you can build confidently without surprises.
+
