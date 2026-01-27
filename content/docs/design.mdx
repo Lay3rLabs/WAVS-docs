@@ -5,7 +5,7 @@ description: Best practices and design patterns for WAVS services
 import { Callout } from 'fumadocs-ui/components/callout';
 import { DocsPage } from 'fumadocs-ui/page';
 
-The WAVS approach to AVS design focuses on the lightweight and agile nature of components, with an emphasis on performance and security.
+The WAVS approach to application design focuses on the lightweight and agile nature of components, with an emphasis on performance and security.
 
 WAVS works best with the "serverless function" approach, wherein the priority of service component logic is to process data from external sources rather than store it locally. In this model, a component can receive input data from external sources, process it, and submit the verifiable outputs to external sources.
 
@@ -25,7 +25,7 @@ Conversely, a component that is designed to fetch "current price" would be non-d
 
 ## State
 
-Persistent state introduces additional challenges in AVS design with WAVS: operators may execute triggers at different times or, in some cases, not run them at all if they join an AVS after it has been running for some time. Components that rely on operator-local mutable state risk failing consensus due to inconsistencies in execution. For these reasons, it is best practice to avoid storing operator-local mutable state within your components.
+Persistent state introduces additional challenges in application design with WAVS: operators may execute triggers at different times or, in some cases, not run them at all if they join an protocol after it has been running for some time. Components that rely on operator-local mutable state risk failing consensus due to inconsistencies in execution. For these reasons, it is best practice to avoid storing operator-local mutable state within your components.
 
 This functionality would require features such as state synchronization (P2P), guaranteed execution ordering, and Merkle-proof validation which are not yet supported.
 
