@@ -10,13 +10,13 @@ import { DocsPage } from 'fumadocs-ui/page';
 
 ## What is WAVS?
 
-[WAVS](https://github.com/Lay3rLabs/WAVS) is a [WASI](./how-it-works#wasm-and-wasi) runtime for building AVSs (Autonomous Verifiable Services). With WAVS, you can create, manage, and operate high-performance AVSs using the languages you already know and love (like [Rust, Go, and JavaScript](./handbook/components/component#languages), with more languages like Python coming soon). By providing a base layer of AVS infrastructure, WAVS lets you focus on implementing the core logic of your service. WAVS compiles that logic to [WASM](./how-it-works#wasm-and-wasi), and lets you deploy it as lightweight service components.
+WAVS (Web Assembly Verifiable Services) is the event-driven framework for distributed architectures that helps teams ship decentralized, verifiable applications faster. Developers define events (onchain, offchain, or internal), trigger workflows that execute components via the WAVS Engine, and submit verifiable outputs onchain.
+
+[WAVS](https://github.com/Lay3rLabs/WAVS) is a [WASI](./how-it-works#wasm-and-wasi) runtime for building verifiable services. With WAVS, you can create, manage, and operate high-performance verifiable apps using the languages you already know and love (Rust, Golang, JavaScript/TypeScript, C/C+ and Python). By providing a base layer of verifiable app infrastructure, WAVS lets you focus on implementing the core logic of your service. WAVS compiles that logic to [WASM](./how-it-works#wasm-and-wasi), and lets you deploy it as lightweight service components.
 
 Better yet, WAVS solves the trust problem in off-chain compute: it separates services from the operators that run them. Builders create their components, and operators run them in WAVS runtime at near-native speed. Then, operators sign the results of the off-chain computation and place them on-chain. Boom: off-chain compute with on-chain verifiability.
 
-> In simple terms, WAVS streamlines the process of building and managing an AVS.
-
-Finally, WAVS utilizes restaking (via EigenLayer) to secure its AVSs. A service of services, WAVS is composable by nature, allowing an AVS to dynamically run and manage multiple components that work together to build flexible and intelligent applications.
+> In simple terms, WAVS help you ship verifiable applications faster.
 
 
 ## Use cases
@@ -33,13 +33,13 @@ WAVS supports a wide range of AVS use cases, enabling powerful, verifiable off-c
 
 ## Building a service
 
-WAVS removes the complexity of building an AVS, making it easy to develop and deploy custom services. With built-in AVS infrastructure and developer tooling, WAVS powers a new multichain ecosystem of composable, decentralized, and verifiable applications.
+WAVS removes the complexity of building a verifiable application, making it easy to develop and deploy custom services. With built-in infrastructure and developer tooling, WAVS powers a new multichain ecosystem of composable, decentralized, and verifiable applications.
 
 <Callout title="Learn more" type="info">
 The following is a basic overview of a WAVS service. For a more in-depth overview of WAVS, visit the [How it works section](./how-it-works). Check out the WAVS tutorial to learn how to build a service.
 </Callout>
 
-This example will cover a basic AVS with three parts: a trigger, a service component, and submission logic.
+This example will cover a basic verifibale service with three parts: a trigger, a service component, and submission logic.
 
 ### Defining triggers
 
@@ -51,7 +51,7 @@ To learn more about triggers, visit the [triggers page](./handbook/triggers).
 
 ### Service components
 
-Service components are the core logic of an AVS. They are written in [Rust, Go, or JavaScript](./handbook/components/component#languages) and compiled to [WASM](./how-it-works#wasm-and-wasi) as lightweight WASI components. WAVS provides a base layer of AVS infrastructure, allowing you to focus solely on the logic of your service.
+Service components are the core logic of a verifiable service. They are written in (Rust, Golang, JavaScript/TypeScript, C/C+ or Python)(./handbook/components/component#languages) and compiled to [WASM](./how-it-works#wasm-and-wasi) as lightweight WASI components. WAVS provides a base layer of infrastructure, allowing you to focus solely on the logic of your service.
 
 Service components can contain logic for processing input data from triggers. If a trigger passes data, a service component can use that data as input. For example, a simple service component could contain logic for receiving a number as input and returning the square of that number as output.
 
@@ -67,11 +67,11 @@ Along with your component, you'll also need to define how the results of your se
 
 ### Run your service
 
-AVS builders define their service in a [service manifest or service.json file](./handbook/service) with a workflow that includes a trigger, service component, and submission logic. Registered operators will then listen for the triggers specified by your service. Once triggered, operators will run your service off-chain, where data from a trigger is passed to a service component and run in a sandboxed WASI environment. Operators sign the result of the service computation and the verified result can be returned as an on-chain response.
+Builders define their service in a [service manifest or service.json file](./handbook/service) with a workflow that includes a trigger, service component, and submission logic. Registered operators will then listen for the triggers specified by your service. Once triggered, operators will run your service off-chain, where data from a trigger is passed to a service component and run in a sandboxed WASI environment. Operators sign the result of the service computation and the verified result can be returned as an on-chain response.
 
 <img alt="WAVS" src="https://raw.githubusercontent.com/Lay3rLabs/WAVS-docs/refs/heads/main/public/diagrams/wavs-flow.png" />
 
-With WAVS, service updates are streamlined: updates to services can be made by AVS builders directly without needing to coordinate with operators. Operators only need to upgrade if there is a change to the WAVS node software itself.
+With WAVS, service updates are streamlined: updates to services can be made by builders directly without needing to coordinate with operators. Operators only need to upgrade if there is a change to the WAVS node software itself.
 
 ## Multichain capability
 
@@ -79,14 +79,14 @@ WAVS is built to be multichain. A service can be triggered by events on one chai
 
 ## Composability
 
-WAVS is composable by nature, allowing an AVS to dynamically run and manage multiple workflows that work together to build flexible and intelligent applications. Workflows include a trigger, service component, and submission logic. To [compose services and workflows](./handbook/workflows), the trigger of one workflow can be the submission logic of another workflow. The registry model allows component bytecode to be stored in one location and reused across multiple workflows.
+WAVS is composable by nature, allowing a verifiable service to dynamically run and manage multiple workflows that work together to build flexible and intelligent applications. Workflows include a trigger, service component, and submission logic. To [compose services and workflows](./handbook/workflows), the trigger of one workflow can be the submission logic of another workflow. The registry model allows component bytecode to be stored in one location and reused across multiple workflows.
 
 ## Security
 
-The WAVS platform is secured via Ethereum restaking on EigenLayer, which provides a base security layer for AVSs built using WAVS. Restaking refers to the utilization of staked Ethereum to secure AVSs by imposing additional slashing terms on the staked Ethereum for operator misbehavior. In this way, the cryptoeconomic security of Ethereum is extended to WAVS AVSs.
+The WAVS platform is secured via Ethereum restaking on EigenLayer, which provides a base security layer for applications built using WAVS. Restaking refers to the utilization of staked Ethereum to secure verifiable services by imposing additional slashing terms on the staked Ethereum for operator misbehavior. In this way, the cryptoeconomic security of Ethereum is extended to WAVS apps.
 
 ## Full-stack decentralization
 
-WAVS enables full-stack decentralization by unifying off-chain computation with on-chain verifiability. The chain layer connects to Ethereum and other chains, while the security layer extends cryptoeconomic security via EigenLayer restaking. At the AVS layer, lightweight WAVS powers WASM-based services to process off-chain computations triggered by on-chain events. Operators validate, sign, and commit the results back on-chain, ensuring verifiability and trust-minimized execution. This architecture makes WAVS a scalable, decentralized framework for full-stack applications.
+WAVS enables full-stack decentralization by unifying off-chain computation with on-chain verifiability. The chain layer connects to Ethereum and other chains, while the security layer extends cryptoeconomic security via EigenLayer restaking. At the app layer, lightweight WAVS powers WASM-based services to process off-chain computations triggered by on-chain events. Operators validate, sign, and commit the results back on-chain, ensuring verifiability and trust-minimized execution. This architecture makes WAVS a scalable, decentralized framework for full-stack applications.
 
 <img alt="WAVS" src="https://raw.githubusercontent.com/Lay3rLabs/WAVS-docs/refs/heads/main/public/diagrams/security.png" />
