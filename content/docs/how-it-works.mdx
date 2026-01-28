@@ -7,7 +7,7 @@ import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 
 <img alt="WAVS" src="https://raw.githubusercontent.com/Lay3rLabs/WAVS-docs/refs/heads/main/public/banners/how.png" />
 
-WAVS is a decentralized execution framework for AVSs (Autonomous Verifiable Services), enabling the results of off-chain computation to be brought verifiably on-chain. It provides a runtime for executing WASI-based service components, allowing developers to define event-driven off-chain workflows while inheriting Ethereum's security via EigenLayer restaking.
+WAVS is the event-driven framework for distributed architectures that helps teams ship decentralized, verifiable applications faster. Developers define events (on-chain, off-chain, or internal), trigger workflows that execute components via the WAVS Engine, and submit verifiable outputs on-chain.
 
 ## The flow
 
@@ -50,28 +50,28 @@ A trigger is the event that activates a WAVS service. Triggers can be EVM or Cos
 
 ### Service components
 
-Service components are the heart of the WAVS platform, encapsulating the core logic that powers a service. They contain the off-chain business logic for a service, [written in Rust, Go, or JavaScript](./handbook/components/component#component-languages) (with other languages coming soon). These service components are compiled to WASM and are uploaded to the WAVS platform where they can be run by operators. In the WAVS runtime, service components are sandboxed from each other and from the node's operating system. This way, operators and AVS services maintain a clean separation, with AVS builders defining service components and operators having to opt in to each service.
+Service components are the heart of the WAVS platform, encapsulating the core logic that powers a service. They contain the off-chain business logic for a service, [written in  Rust, Golang, JavaScript/TypeScript, C/C+ or Python](./handbook/components/component#component-languages). These service components are compiled to WASM and are uploaded to the WAVS platform where they can be run by operators. In the WAVS runtime, service components are sandboxed from each other and from the node's operating system. This way, operators and verifiable services maintain a clean separation, with builders defining service components and operators having to opt in to each service.
 
 Service components are lightweight and built for adaptability. Building a service used to take thousands of lines of code and the configuration of dozens of files to execute even the simplest logic. With WAVS, service components can consist of a few lines of code that can be dynamically deployed to the WAVS platform.
 
-Service components are also designed for composability: an AVS can chain multiple components together, creating decentralized flows of off-chain and on-chain executions. These intelligent protocols merge the performance of off-chain computation with on-chain verifiability, creating a complex mesh of decentralized transaction flows.
+Service components are also designed for composability: an app can chain multiple components together, creating decentralized flows of off-chain and on-chain executions. These intelligent protocols merge the performance of off-chain computation with on-chain verifiability, creating a complex mesh of decentralized transaction flows.
 
 To learn more, visit the [Components page](./handbook/components/component). For a hands-on example of a service component, visit the [tutorial](./tutorial/1-overview).
 
 ### WAVS runtime
 
-The WAVS (WASI-AVS) runtime serves as the off-chain execution environment for all services running on the WAVS platform. Powered by operators running the WAVS node software, it provides a structured framework for deploying and managing service components that run within a WASI (WebAssembly System Interface) environment. You can think of WASI as a lightweight OS-like interface, offering a standard set of APIs that allow service components to perform system-level operations such as file handling and environment interactions. WAVS enables service components to execute securely within this WASI-powered sandbox, ensuring isolation from both the host system and other components.
+The WAVS runtime serves as the off-chain execution environment for all services running on the WAVS platform. Powered by operators running the WAVS node software, it provides a structured framework for deploying and managing service components that run within a WASI (Web Assembly System Interface) environment. You can think of WASI as a lightweight OS-like interface, offering a standard set of APIs that allow service components to perform system-level operations such as file handling and environment interactions. WAVS enables service components to execute securely within this WASI-powered sandbox, ensuring isolation from both the host system and other components.
 
 ### WASM and WASI
 
-[WASM (Web Assembly)](https://webassembly.org/) is a high-performance, low-level binary format that can be compiled from multiple programming languages. WASM can even run in web browsers at near-native speed. By leveraging WASM, AVSs built with WAVS are lightning-fast, lightweight, and easy to develop.
+[WASM (Web Assembly)](https://webassembly.org/) is a high-performance, low-level binary format that can be compiled from multiple programming languages. WASM can even run in web browsers at near-native speed. By leveraging WASM, applications built with WAVS are lightning-fast, lightweight, and easy to develop.
 
 WASI (WebAssembly System Interface) is a standardized API that enables WASM (WebAssembly) modules to interact with a host system in a secure and platform-independent way. It provides WASM modules with a standardized set of APIs to access system resources. For more information, visit the [WASI documentation](https://wasi.dev/).
 
 There are significant advantages in leveraging a WASM/WASI-based platform for AVSs:
 
-- Lightweight execution: Service components are lightweight WASM binaries ideal for high-frequency, low-latency AVS tasks.
-- Speed: Components can run in the WASI environment at near-native speeds, providing a significant advantage over Dockerized AVSs.
+- Lightweight execution: Service components are lightweight WASM binaries ideal for high-frequency, low-latency tasks.
+- Speed: Components can run in the WASI environment at near-native speeds, providing a significant advantage over Dockerized apps.
 - Low overhead: Instead of each service needing its own dedicated Docker container, the WAVS runtime provides a computational layer that can be used by many components, saving storage and startup time.
 - Dynamic deployment: To upgrade a service, simply upload a new component and update your service metadata to point to the new component. No more downtime or coordination of new binaries among operators.
 - Security and separation: The WAVS WASI runtime enforces security by sandboxing service components, allowing them to interact with the host (WAVS) only through explicitly permitted WASI APIs.
