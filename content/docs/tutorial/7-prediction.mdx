@@ -26,15 +26,15 @@ These contracts handle the creation of markets and conditional tokens.
 
 [`conditional-tokens-market-makers`](https://github.com/Lay3rLabs/conditional-tokens-market-makers) - these contracts are forked from Gnosis and updated to a recent Solidity version, and they are the market makers that create a market based on the conditional shares above.
 
-[`PredictionMarketFactory.sol`](https://github.com/Lay3rLabs/wavs-prediction-market/blob/main/src/contracts/PredictionMarketFactory.sol) - this contract sets up all the contracts required for a functioning prediction market using the forked contracts above, and it has the power to resolve the market once the outcome is determined by the oracle AVS.
+[`PredictionMarketFactory.sol`](https://github.com/Lay3rLabs/wavs-prediction-market/blob/main/src/contracts/PredictionMarketFactory.sol) - this contract sets up all the contracts required for a functioning prediction market using the forked contracts above, and it has the power to resolve the market once the outcome is determined by the oracle application.
 
 ### Extending the trigger contract
 
 In this demo, the oracle that resolves the market is triggered by the [`PredictionMarketOracleController.sol`](https://github.com/Lay3rLabs/wavs-prediction-market/blob/main/src/contracts/PredictionMarketOracleController.sol) contract.
 
-This contract contains modifications to the `WavsTrigger.sol` contract from the [WAVS Foundry Template repo](https://github.com/Lay3rLabs/wavs-foundry-template/tree/main/src/contracts/WavsTrigger.sol). Similar to the simple trigger contract, it passes data to the oracle AVS via the `NewTrigger` event.
+This contract contains modifications to the `WavsTrigger.sol` contract from the [WAVS Foundry Template repo](https://github.com/Lay3rLabs/wavs-foundry-template/tree/main/src/contracts/WavsTrigger.sol). Similar to the simple trigger contract, it passes data to the oracle service via the `NewTrigger` event.
 
-It extends the contract by storing trigger metadata, validating signed AVS outputs, and interacting with the external contracts mentioned above (`PredictionMarketFactory`, `MarketMaker`, and `ConditionalTokens`).
+It extends the contract by storing trigger metadata, validating signed application outputs, and interacting with the external contracts mentioned above (`PredictionMarketFactory`, `MarketMaker`, and `ConditionalTokens`).
 
 It also contains logic to enforce a payment when a trigger is added:
 
