@@ -87,7 +87,7 @@ The `run` function is the entry point for your business logic: it receives and d
 ```rust
 // In lib.rs
 impl Guest for Component {
-    fn run(action: TriggerAction) -> Result<Option<WasmResponse>, String> {
+    fn run(action: TriggerAction) -> Result<Vec<WasmResponse>, String> {
         // 1. Decode the trigger data using the decode_trigger_event function from trigger.rs
         let (trigger_id, req, dest) = decode_trigger_event(action.data)?;
         // 2. Process the data (your business logic)
@@ -99,12 +99,13 @@ impl Guest for Component {
         // 3. Encode the output based on destination
         let output = match dest {
             // For on-chain submissions, the output is abi encoded using the encode_trigger_output function from trigger.rs
-            Destination::Ethereum => Some(encode_trigger_output(trigger_id, &res)),
+            Destination::Ethereum => vec![encode_trigger_output(trigger_id, &res)],
             // For local testing via wasi-exec, the output is returned as raw bytes
-            Destination::CliOutput => Some(WasmResponse {
+            Destination::CliOutput => vec![WasmResponse {
                 payload: res.into(),
-                ordering: None
-            }),
+                ordering: None,
+                event_id_salt: None,
+            }],
         };
         Ok(output)
     }
@@ -147,13 +148,20 @@ pub fn encode_trigger_output(trigger_id: u64, output: impl AsRef<[u8]>) -> WasmR
             triggerId: trigger_id,
             data: output.as_ref().to_vec().into(),
         }
-        .abi_encode(),  // ABI encode the struct for blockchain submission
-        ordering: None, // Optional ordering parameter for transaction sequencing
+        .abi_encode(),      // ABI encode the struct for blockchain submission
+        ordering: None,     // Optional ordering parameter for transaction sequencing
+        event_id_salt: None, // Optional salt to differentiate multiple responses from one trigger
     }
 }
 ```
 
-Outputs for components are returned as a `WasmResponse` struct, which is a wrapper around the output data of the component for encoding and submission back to Ethereum. It contains a `payload` field that is the encoded output data and an optional `ordering` field that is used to order the transactions in the workflow. The `WasmResponse` is submitted to WAVS which routes it according to the workflow's submission logic.
+Outputs for components are returned as a `Vec<WasmResponse>`. Returning a `Vec` allows a single trigger invocation to produce multiple on-chain submissions, each with a unique identity. The `WasmResponse` struct has three fields:
+
+- `payload`: The encoded output data (ABI-encoded bytes for on-chain submission)
+- `ordering`: Optional ordering parameter for transaction sequencing within a workflow
+- `event_id_salt`: Optional bytes that are mixed into the event ID hash. When a component returns multiple responses from one trigger, set a unique `event_id_salt` on each response so they receive distinct event IDs and can be submitted as separate on-chain transactions.
+
+The `Vec<WasmResponse>` is submitted to WAVS which routes each response according to the workflow's submission logic.
 
 ## Component definition
 

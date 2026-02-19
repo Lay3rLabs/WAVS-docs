@@ -51,7 +51,23 @@ pub enum TriggerData {
     },
     Cron { //For cron triggers
         trigger_time: Timestamp, /// The trigger time
-    }
+    },
+    AtprotoEvent { // For Bluesky/AT Protocol event triggers
+        sequence: i64,         /// Monotonically increasing sequence number
+        timestamp: i64,        /// Event timestamp
+        repo: String,          /// DID of the repository (e.g. "did:plc:...")
+        collection: String,    /// Lexicon collection (e.g. "app.bsky.feed.post")
+        rkey: String,          /// Record key within the collection
+        action: String,        /// Operation type: "create", "update", or "delete"
+        cid: Option<String>,   /// Content identifier of the record (None for deletes)
+        record_data: Option<String>, /// JSON-encoded record contents (None for deletes)
+    },
+    HypercoreAppend { // For Hypercore feed append triggers
+        feed_key: String,      /// Public key identifying the Hypercore feed
+        index: u64,            /// Index of the newly appended block in the feed
+        data: Vec<u8>,         /// Raw bytes of the appended block
+    },
+    Raw(Vec<u8>),              // Raw bytes — used for local testing with `wasi-exec`
 }
 ```
 
@@ -84,7 +100,7 @@ Your evm chain information must be set in `wavs.toml` under the `[default.chains
 # Mainnet
 [default.chains.evm.ethereum]
 chain_id = "1"
-ws_endpoint = "wss://eth.drpc.org"
+ws_endpoints = ["wss://eth.drpc.org"]  # Supports multiple endpoints for automatic failover
 http_endpoint = "https://eth.drpc.org"
 ```
 
@@ -200,3 +216,65 @@ Executes your component at regular block intervals on a specified EVM or Cosmos 
   }
 }
 ```
+
+### AT Protocol (Bluesky) event trigger
+
+Executes your component when a record is created, updated, or deleted on the [AT Protocol](https://atproto.com/) network (the protocol underlying Bluesky). Useful for building services that react to social activity, content moderation, or decentralized social graph changes.
+
+```json
+"trigger": {
+  "atproto_event": {
+    "collection": "app.bsky.feed.post",  // Lexicon collection to watch
+    "action": "create"                   // "create", "update", or "delete"
+  }
+}
+```
+
+The `TriggerData::AtprotoEvent` variant passed to your component contains:
+
+```rust
+TriggerData::AtprotoEvent(TriggerDataAtprotoEvent {
+    sequence,     // Monotonically increasing sequence number
+    timestamp,    // Event timestamp
+    repo,         // DID of the repository (e.g. "did:plc:...")
+    collection,   // Lexicon collection (e.g. "app.bsky.feed.post")
+    rkey,         // Record key within the collection
+    action,       // "create", "update", or "delete"
+    cid,          // Content identifier (None for deletes)
+    record_data,  // JSON-encoded record contents (None for deletes)
+    ..
+})
+```
+
+### Hypercore append trigger
+
+Executes your component when a new block is appended to a [Hypercore](https://hypercore-protocol.org/) feed. Useful for building services that process peer-to-peer data streams.
+
+```json
+"trigger": {
+  "hypercore_append": {
+    "feed_key": "abc123..."  // Public key of the Hypercore feed to watch
+  }
+}
+```
+
+The `TriggerData::HypercoreAppend` variant contains:
+
+```rust
+TriggerData::HypercoreAppend(TriggerDataHypercoreAppend {
+    feed_key,  // Public key identifying the Hypercore feed
+    index,     // Index of the newly appended block
+    data,      // Raw bytes of the appended block
+})
+```
+
+### Raw trigger (local testing)
+
+The `Raw` variant is not a service trigger type configured in `service.json`. It is the trigger data format used when executing a component locally with `make wasi-exec` in the template. Raw bytes are passed directly to the component without any ABI decoding.
+
+```rust
+// In trigger.rs — handle the Raw variant for local testing
+TriggerData::Raw(data) => Ok((0, data.clone(), Destination::CliOutput)),
+```
+
+See the [component overview](./components/component#trigger-inputs) for a full example of handling both on-chain and raw trigger data in the same component.

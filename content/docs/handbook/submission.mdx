@@ -85,9 +85,15 @@ contract SimpleSubmit is ITypes, IWavsServiceHandler {
 
 ## Aggregator
 
+<Callout title="Aggregator component required" type="warn">
+
+As of WAVS v1.0.0, services that submit on-chain must include a custom aggregator component. The aggregator component controls submission timing and target addresses. See the [Aggregator component guide](./components/aggregator) for how to build one.
+
+</Callout>
+
 The aggregator is used to collect and validate responses from multiple operators before submitting them to the blockchain. It acts as an intermediary that receives signed responses from operators, validates each operator's signature, aggregates signatures when enough operators have responded, and submits the aggregated data to the submission contract. The aggregator supports exact match aggregation, meaning that consensus is reached if a threshold amount of submitted responses from operators are identical. Visit the [design considerations page](/design) for more information on aggregation and service design.
 
-WAVS currently uses ECDSA signatures for aggregation, but will also support BLS signatures in the future.
+WAVS currently uses ECDSA signatures for aggregation.
 
 ## Aggregator submission flow
 
