@@ -21,7 +21,7 @@ Better yet, WAVS solves the trust problem in off-chain compute: it separates ser
 
 ## Use cases
 
-WAVS supports a wide range of AVS use cases, enabling powerful, verifiable off-chain computation across different domains:
+WAVS supports a wide range of use cases, enabling powerful, verifiable off-chain computation across different domains:
 
 - **Decentralized AI**: WAVS unlocks decentralized AI that is [deterministic and verifiable](https://www.layer.xyz/news-and-insights/deterministic-ai), enabling trustless decision-making and autonomous governance through DAO-controlled AI agents.
 - **Oracles**: [Create](./tutorial/1-overview) and dynamically deploy new oracles as easily as uploading a component to your service to verifiably bring data from any source on-chain.
@@ -83,10 +83,16 @@ WAVS is composable by nature, allowing a verifiable service to dynamically run a
 
 ## Security
 
-The WAVS platform is secured via Ethereum restaking on EigenLayer, which provides a base security layer for applications built using WAVS. Restaking refers to the utilization of staked Ethereum to secure verifiable services by imposing additional slashing terms on the staked Ethereum for operator misbehavior. In this way, the cryptoeconomic security of Ethereum is extended to WAVS apps.
+WAVS has a pluggable security layer — you choose the model that fits your application, from a simple permissioned deployment to full cryptoeconomic staking.
+
+- **Proof of Authority (PoA)** — The simplest option. A contract owner (typically a deployer account, DAO, or multisig) manages the operator set directly, assigning each operator a numeric weight. No staking or external protocol required. The [PoA middleware](https://github.com/Lay3rLabs/poa-middleware) is audited and production-ready, making it a solid default for most services.
+
+- **TEEs (Trusted Execution Environments)** — Components can run inside hardware-based TEEs such as Intel TDX or AWS Nitro Enclaves. TEEs provide confidential execution and hardware attestation, useful for services that require data privacy or need to prove that a specific binary ran unmodified.
+
+- **Restaking** — Provides cryptoeconomic security by leveraging staked assets from a restaking protocol. Operators stake and are subject to slashing for misbehavior, aligning economic incentives with correct execution. [EigenLayer](https://www.eigenlayer.xyz/) and [Symbiotic](https://symbiotic.fi/) are examples of restaking protocols supported by WAVS.
 
 ## Full-stack decentralization
 
-WAVS enables full-stack decentralization by unifying off-chain computation with on-chain verifiability. The chain layer connects to Ethereum and other chains, while the security layer extends cryptoeconomic security via EigenLayer restaking. At the app layer, lightweight WAVS powers WASM-based services to process off-chain computations triggered by on-chain events. Operators validate, sign, and commit the results back on-chain, ensuring verifiability and trust-minimized execution. This architecture makes WAVS a scalable, decentralized framework for full-stack applications.
+WAVS enables full-stack decentralization by unifying off-chain computation with on-chain verifiability. The chain layer connects to Ethereum and other chains, while the security layer provides flexible, verifiable operator accountability — via PoA, TEEs, restaking, or a combination. At the app layer, lightweight WAVS powers WASM-based services to process off-chain computations triggered by on-chain events. Operators validate, sign, and commit the results back on-chain, ensuring verifiability and trust-minimized execution. This architecture makes WAVS a scalable, decentralized framework for full-stack applications.
 
 <img alt="WAVS" src="https://raw.githubusercontent.com/Lay3rLabs/WAVS-docs/refs/heads/main/public/diagrams/security.png" />

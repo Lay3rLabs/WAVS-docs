@@ -102,6 +102,6 @@ To learn more about the submission contract, visit the [Submission page](./handb
 
 ### Updating a service
 
-Because of the lightweight and portable nature of WebAssembly, WAVS operators only need to run a single Docker image. WAVS provides a runtime for all registered services to run, each sandboxed from the other and from the node's operating system due to the nature of [WASI](#wasm-and-wasi). Operators will need to opt in to running different services by registering to an AVS.
+Because of the lightweight and portable nature of WebAssembly, WAVS operators only need to run a single Docker image. WAVS provides a runtime for all registered services to run, each sandboxed from the other and from the node's operating system due to the nature of [WASI](#wasm-and-wasi). Operators will need to opt in to running different services by registering to each service's service manager.
 
 Updates to service logic do not require node upgrades. Instead, developers can dynamically deploy a new service component and update their service manifest. Instead of needing to run a new Docker image every time a service is updated, operators only need to upgrade if there is a breaking change to the WAVS node software itself.
