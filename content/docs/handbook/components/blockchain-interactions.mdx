@@ -27,8 +27,8 @@ wavs-wasi-utils = "0.4.0"                                # Blockchain interactio
 wstd = "0.5.3"                                                  # WASI standard library
 
 # Alloy crates for Ethereum interaction
-alloy-sol-macro = { version = "1.1.0", features = ["json"] }    # sol! macro for interfaces
-alloy-sol-types = "1.1.0"                                       # ABI handling & type generation
+alloy-sol-macro = { version = "1.0.0", features = ["json"] }    # sol! macro for interfaces
+alloy-sol-types = "1.0.0"                                       # ABI handling & type generation
 alloy-network = "0.15.10"                                       # Network trait and Ethereum network type
 alloy-provider = { version = "0.15.10", default-features = false, features = ["rpc-api"] }  # RPC provider
 alloy-rpc-types = "0.15.10"                                     # RPC type definitions
@@ -50,14 +50,14 @@ Chain configurations are defined in the root `wavs.toml` file. This allows compo
 # Local / Testnet
 [default.chains.evm.local]
 chain_id = "31337"
-ws_endpoint = "ws://localhost:8545"
+ws_endpoints = ["ws://localhost:8545"]  # Array of WebSocket endpoints with automatic failover
 http_endpoint = "http://localhost:8545"
 poll_interval_ms = 7000
 
-# Mainnet
+# Mainnet (multiple endpoints for redundancy)
 [default.chains.evm.ethereum]
 chain_id = "1"
-ws_endpoint = "wss://eth.drpc.org"
+ws_endpoints = ["wss://eth.drpc.org", "wss://ethereum.publicnode.com"]  # Failover to next on disconnect
 http_endpoint = "https://eth.drpc.org"
 ```
 

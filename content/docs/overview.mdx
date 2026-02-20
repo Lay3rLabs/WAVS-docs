@@ -10,18 +10,27 @@ import { DocsPage } from 'fumadocs-ui/page';
 
 ## What is WAVS?
 
-WAVS (Web Assembly Verifiable Services) is the event-driven framework for distributed architectures that helps teams ship decentralized, verifiable applications faster. Developers define events (onchain, offchain, or internal), trigger workflows that execute components via the WAVS Engine, and submit verifiable outputs onchain.
+Developers building decentralized applications face an impossible choice:
 
-[WAVS](https://github.com/Lay3rLabs/WAVS) is a [WASI](./how-it-works#wasm-and-wasi) runtime for building verifiable services. With WAVS, you can create, manage, and operate high-performance verifiable apps using the languages you already know and love (Rust, Golang, JavaScript/TypeScript, C/C+ and Python). By providing a base layer of verifiable app infrastructure, WAVS lets you focus on implementing the core logic of your service. WAVS compiles that logic to [WASM](./how-it-works#wasm-and-wasi), and lets you deploy it as lightweight service components.
+- **Run everything on-chain** — Prohibitively expensive and slow
+- **Rely on centralized servers** — Defeats the purpose of decentralization
+- **Build custom infrastructure** — Months of scaffolding across separate bridges, oracles, and serverless functions
 
-Better yet, WAVS solves the trust problem in off-chain compute: it separates services from the operators that run them. Builders create their components, and operators run them in WAVS runtime at near-native speed. Then, operators sign the results of the off-chain computation and place them on-chain. Boom: off-chain compute with on-chain verifiability.
+[WAVS](https://github.com/Lay3rLabs/WAVS) (Web Assembly Verifiable Services) is the event-driven framework for distributed architectures that provides a third option: verifiable off-chain compute through a unified framework. Developers define events (on-chain, off-chain, or internal), trigger workflows that execute components via the WAVS Engine, and submit verifiable outputs on-chain. Bridges, oracles, and other third-party server functions become first-class events — handled natively within one framework instead of stitched together across separate systems.
 
-> In simple terms, WAVS help you ship verifiable applications faster.
+Write logic in languages you already know — Rust, Golang, JavaScript/TypeScript, or Python — compiled to [WASM](./how-it-works#wasm-and-wasi) and executed at near-native speed. WAVS separates services from the operators that run them: builders define components, operators execute them off-chain, sign the results, and commit them on-chain. Off-chain compute with on-chain verifiability.
 
+## Why WAVS?
+
+**Ship faster** — Skip the boilerplate and focus on your application. Built-in tooling handles event parsing, signature aggregation, and coordination logic. Components can be added, updated, or modified without coordinating changes across an operator set. Build in languages your team already knows — no new smart contract languages required.
+
+**Lower costs** — One framework replaces three separate systems. Oracles, bridge integrations, and serverless functions are all first-class events in WAVS, so you're not paying for and maintaining each independently. Your core logic runs in standard languages, so you can hire general-purpose engineers and choose the chain, security model, and deployment shape that fits your budget and roadmap.
+
+**No lock-in** — Your application logic isn't trapped in one chain, one execution model, or one vendor's roadmap. WAVS is compatible with ZK proofs, TEEs, MPC, and multiple security models (PoA, restaking). Switch chains, security models, or verification methods as your product grows — without rewriting core logic. WAVS is open source with no business license.
 
 ## Use cases
 
-WAVS supports a wide range of AVS use cases, enabling powerful, verifiable off-chain computation across different domains:
+WAVS supports a wide range of use cases, enabling powerful, verifiable off-chain computation across different domains:
 
 - **Decentralized AI**: WAVS unlocks decentralized AI that is [deterministic and verifiable](https://www.layer.xyz/news-and-insights/deterministic-ai), enabling trustless decision-making and autonomous governance through DAO-controlled AI agents.
 - **Oracles**: [Create](./tutorial/1-overview) and dynamically deploy new oracles as easily as uploading a component to your service to verifiably bring data from any source on-chain.
@@ -39,7 +48,7 @@ WAVS removes the complexity of building a verifiable application, making it easy
 The following is a basic overview of a WAVS service. For a more in-depth overview of WAVS, visit the [How it works section](./how-it-works). Check out the WAVS tutorial to learn how to build a service.
 </Callout>
 
-This example will cover a basic verifibale service with three parts: a trigger, a service component, and submission logic.
+This example will cover a basic verifiable service with three parts: a trigger, a service component, and submission logic.
 
 ### Defining triggers
 
@@ -83,10 +92,14 @@ WAVS is composable by nature, allowing a verifiable service to dynamically run a
 
 ## Security
 
-The WAVS platform is secured via Ethereum restaking on EigenLayer, which provides a base security layer for applications built using WAVS. Restaking refers to the utilization of staked Ethereum to secure verifiable services by imposing additional slashing terms on the staked Ethereum for operator misbehavior. In this way, the cryptoeconomic security of Ethereum is extended to WAVS apps.
+WAVS has a pluggable security layer — you choose the model that fits your application, from a simple permissioned deployment to full cryptoeconomic staking.
+
+- **Proof of Authority (PoA)** — The simplest option. A contract owner (typically a deployer account, DAO, or multisig) manages the operator set directly, assigning each operator a numeric weight. No staking or external protocol required. The [PoA middleware](https://github.com/Lay3rLabs/poa-middleware) is audited and production-ready, making it a solid default for most services.
+
+- **TEEs (Trusted Execution Environments)** — Components can run inside hardware-based TEEs such as Intel TDX or AWS Nitro Enclaves. TEEs provide confidential execution and hardware attestation, useful for services that require data privacy or need to prove that a specific binary ran unmodified.
+
+- **Restaking** — Provides cryptoeconomic security by leveraging staked assets from a restaking protocol. Operators stake and are subject to slashing for misbehavior, aligning economic incentives with correct execution. [EigenLayer](https://www.eigenlayer.xyz/) and [Symbiotic](https://symbiotic.fi/) are examples of restaking protocols supported by WAVS.
 
 ## Full-stack decentralization
 
-WAVS enables full-stack decentralization by unifying off-chain computation with on-chain verifiability. The chain layer connects to Ethereum and other chains, while the security layer extends cryptoeconomic security via EigenLayer restaking. At the app layer, lightweight WAVS powers WASM-based services to process off-chain computations triggered by on-chain events. Operators validate, sign, and commit the results back on-chain, ensuring verifiability and trust-minimized execution. This architecture makes WAVS a scalable, decentralized framework for full-stack applications.
-
-<img alt="WAVS" src="https://raw.githubusercontent.com/Lay3rLabs/WAVS-docs/refs/heads/main/public/diagrams/security.png" />
+WAVS enables full-stack decentralization by unifying off-chain computation with on-chain verifiability. The chain layer connects to Ethereum and other chains, while the security layer provides flexible, verifiable operator accountability — via PoA, TEEs, restaking, or a combination. At the app layer, lightweight WAVS powers WASM-based services to process off-chain computations triggered by on-chain events. Operators validate, sign, and commit the results back on-chain, ensuring verifiability and trust-minimized execution. This architecture makes WAVS a scalable, decentralized framework for full-stack applications.

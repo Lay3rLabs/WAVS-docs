@@ -5,7 +5,13 @@ description: Deploying and running WAVS services
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 
-## Local: Start Anvil, WAVS, and deploy Eigenlayer
+<Callout title="Foundry template" type="info">
+
+This tutorial uses the [wavs-foundry-template](https://github.com/Lay3rLabs/wavs-foundry-template) and its Makefile-based workflow. Real-world WAVS projects may use different tooling and project structures.
+
+</Callout>
+
+## Local: Start Anvil, WAVS, and deploy service manager
 
 1. Create a `.env` file for your project by copying over the example with the following command:
 
@@ -54,12 +60,12 @@ You can skip this step by setting `FUNDED_KEY=` in `.env` to a private key of yo
 bash ./script/create-deployer.sh
 ```
 
-## Deploy EigenLayer Middleware
+## Deploy PoA Service Manager
 
-Local deployments use the real testnet contracts via a forked anvil instance. This middleware will setup all the required contracts and configurations for the base of your AVS.
+This deploys the [PoA service manager contract](https://github.com/Lay3rLabs/poa-middleware), which controls the operator set for your service. An owner account (the deployer by default) manages which operators are registered and their relative voting weight.
 
 ```bash docci-delay-after=2
-COMMAND=deploy make wavs-middleware
+COMMAND=deploy make poa-middleware
 ```
 
 ## Deploy solidity contracts
@@ -122,8 +128,7 @@ bash ./script/create-operator.sh 1
 
 IPFS_GATEWAY=${IPFS_GATEWAY} bash ./infra/wavs-1/start.sh
 
-# Deploy the service JSON to WAVS so it now watches and submits.
-# 'opt in' for WAVS to watch (this is before we register to Eigenlayer)
+# Deploy the service to WAVS so it now watches and submits.
 WAVS_ENDPOINT=http://127.0.0.1:8000 SERVICE_URL=${IPFS_URI} IPFS_GATEWAY=${IPFS_GATEWAY} make deploy-service
 ```
 
@@ -131,17 +136,23 @@ WAVS_ENDPOINT=http://127.0.0.1:8000 SERVICE_URL=${IPFS_URI} IPFS_GATEWAY=${IPFS_
 
 Each service gets its own key path (hd_path). The first service starts at 1 and increments from there. The following commands are used to register the operator with the [service manager contract](../handbook/service#service-manager).
 
+With PoA, the deployer (owner) registers operators and assigns a weight. No ETH stake is required.
+
 ```bash
 SERVICE_INDEX=0 source ./script/avs-signing-key.sh
 
-# Local:
-export WAVS_SERVICE_MANAGER_ADDRESS=$(jq -r .addresses.WavsServiceManager ./.nodes/avs_deploy.json)
+# Local: read the PoA service manager address from the deploy output
+export WAVS_SERVICE_MANAGER_ADDRESS=$(jq -r .addresses.POAStakeRegistry ./.nodes/poa_deploy.json)
 # TESTNET: set WAVS_SERVICE_MANAGER_ADDRESS
 
-COMMAND="register ${OPERATOR_PRIVATE_KEY} ${AVS_SIGNING_ADDRESS} 0.001ether" make wavs-middleware
+# Derive the operator's EVM address from their private key
+export OPERATOR_ADDRESS=$(cast wallet address --private-key "$OPERATOR_PRIVATE_KEY")
 
-# Verify registration
-COMMAND="list_operators" PAST_BLOCKS=500 make wavs-middleware
+# Register the operator (owner-managed — the deployer account signs this tx)
+COMMAND="owner_operation registerOperator ${OPERATOR_ADDRESS} 100" make poa-middleware
+
+# Set the operator's signing key (the operator signs this tx with their own key)
+COMMAND="update_signing_key ${OPERATOR_PRIVATE_KEY} ${AVS_SIGNING_ADDRESS}" make poa-middleware
 ```
 
 ## Trigger the service

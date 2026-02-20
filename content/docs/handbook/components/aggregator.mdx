@@ -1,0 +1,255 @@
+---
+title: Aggregator component
+description: Building custom aggregator components that control on-chain submission
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+
+As of WAVS v1.0.0, services that submit results on-chain must include a custom **aggregator component**. The aggregator component is a WASM component — like an operator component — but it runs inside the WAVS aggregator process instead of on each operator node. It decides *when* and *where* to submit the aggregated signatures and payload.
+
+## How aggregator components differ from operator components
+
+| | Operator component | Aggregator component |
+|---|---|---|
+| **Macro** | `export_layer_trigger_world!` | `export_aggregator_world!` |
+| **Entry point** | `fn run(action: TriggerAction) -> Result<Vec<WasmResponse>, String>` | Three callbacks (see below) |
+| **Runs on** | Every registered operator node | The aggregator service |
+| **Purpose** | Execute business logic, produce a signed result | Decide when/where to submit the collected results |
+
+## Entry points
+
+Aggregator components implement the `Guest` trait from the aggregator world bindings, which has three methods:
+
+```rust
+impl Guest for Component {
+    /// Called when enough operator responses have been collected for a trigger event.
+    /// Return a list of AggregatorActions — typically Submit or Timer.
+    fn process_input(input: AggregatorInput) -> Result<Vec<AggregatorAction>, String>;
+
+    /// Called when a timer previously scheduled by process_input fires.
+    /// Return Submit to proceed with on-chain submission, or an empty Vec to drop the event.
+    fn handle_timer_callback(input: AggregatorInput) -> Result<Vec<AggregatorAction>, String>;
+
+    /// Called after the aggregator has attempted an on-chain submission.
+    /// tx_result is Ok(tx_hash) on success or Err(message) on failure.
+    fn handle_submit_callback(
+        input: AggregatorInput,
+        tx_result: Result<AnyTxHash, String>,
+    ) -> Result<(), String>;
+}
+```
+
+### `AggregatorInput`
+
+Each callback receives an `AggregatorInput` containing:
+
+- `trigger_action` — the original `TriggerAction` that started the workflow (same data available to the operator component)
+
+Use `host::get_event_id()` to retrieve the unique event ID for the current batch.
+
+### `AggregatorAction`
+
+`process_input` and `handle_timer_callback` return `Vec<AggregatorAction>`:
+
+```rust
+pub enum AggregatorAction {
+    /// Submit the collected signatures and payload on-chain immediately.
+    Submit(SubmitAction),
+    /// Schedule handle_timer_callback to fire after a delay.
+    Timer(TimerAction),
+}
+
+pub enum SubmitAction {
+    Evm(EvmSubmitAction),
+    Cosmos(CosmosSubmitAction),
+}
+
+pub struct EvmSubmitAction {
+    pub chain: String,           // Chain name as defined in wavs.toml (validated as ChainKey at runtime)
+    pub address: EvmAddress,     // Target service handler contract address
+    pub gas_price: Option<U128>, // Optional gas price override (in wei)
+}
+
+pub struct TimerAction {
+    pub delay: Duration, // How long to wait before calling handle_timer_callback
+}
+```
+
+## Simple aggregator example
+
+The simple aggregator submits immediately when the threshold is reached. It reads the target chain and contract address from component config variables.
+
+```rust
+use world::{
+    host,
+    wavs::aggregator::input::AggregatorInput,
+    wavs::aggregator::output::{
+        AggregatorAction, EvmSubmitAction, SubmitAction,
+    },
+    wavs::types::chain::{AnyTxHash, EvmAddress},
+    Guest,
+};
+
+struct Component;
+
+impl Guest for Component {
+    fn process_input(_input: AggregatorInput) -> Result<Vec<AggregatorAction>, String> {
+        let chain = host::config_var("chain")
+            .ok_or("chain config variable is required")?;
+        let service_handler_str = host::config_var("service_handler")
+            .ok_or("service_handler config variable is required")?;
+
+        let address: alloy_primitives::Address = service_handler_str
+            .parse()
+            .map_err(|e| format!("Failed to parse service handler address: {e}"))?;
+
+        let submit_action = SubmitAction::Evm(EvmSubmitAction {
+            chain,
+            address: EvmAddress { raw_bytes: address.to_vec() },
+            gas_price: None,
+        });
+
+        Ok(vec![AggregatorAction::Submit(submit_action)])
+    }
+
+    fn handle_timer_callback(_input: AggregatorInput) -> Result<Vec<AggregatorAction>, String> {
+        Ok(Vec::new()) // Not used by simple aggregator
+    }
+
+    fn handle_submit_callback(
+        _input: AggregatorInput,
+        _tx_result: Result<AnyTxHash, String>,
+    ) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+export_aggregator_world!(Component);
+```
+
+## Timer-based aggregator example
+
+The timer aggregator defers submission: when `process_input` is called, it schedules a timer instead of submitting immediately. When the timer fires, `handle_timer_callback` validates the trigger data and then submits. This pattern is useful when you want to wait before submitting — for example, to batch multiple events or allow time for additional operator responses.
+
+```rust
+impl Guest for Component {
+    fn process_input(_input: AggregatorInput) -> Result<Vec<AggregatorAction>, String> {
+        let timer_delay_secs: u64 = host::config_var("timer_delay_secs")
+            .ok_or("timer_delay_secs config variable is required")?
+            .parse()
+            .map_err(|e| format!("Failed to parse timer_delay_secs: {e}"))?;
+
+        // Schedule handle_timer_callback instead of submitting immediately
+        Ok(vec![AggregatorAction::Timer(TimerAction {
+            delay: Duration { secs: timer_delay_secs },
+        })])
+    }
+
+    fn handle_timer_callback(input: AggregatorInput) -> Result<Vec<AggregatorAction>, String> {
+        let chain = host::config_var("chain")
+            .ok_or("chain config variable is required")?;
+        let service_handler_str = host::config_var("service_handler")
+            .ok_or("service_handler config variable is required")?;
+
+        let address: alloy_primitives::Address = service_handler_str
+            .parse()
+            .map_err(|e| format!("Failed to parse service handler address: {e}"))?;
+
+        // Optionally validate the trigger data before submitting
+        if !is_valid_trigger(input.trigger_action.data)? {
+            return Ok(vec![]); // Drop the event — don't submit
+        }
+
+        Ok(vec![AggregatorAction::Submit(SubmitAction::Evm(EvmSubmitAction {
+            chain,
+            address: EvmAddress { raw_bytes: address.to_vec() },
+            gas_price: None,
+        }))])
+    }
+
+    fn handle_submit_callback(
+        _input: AggregatorInput,
+        tx_result: Result<AnyTxHash, String>,
+    ) -> Result<(), String> {
+        // Log result, write to KV store, etc.
+        Ok(())
+    }
+}
+```
+
+## Configuring the aggregator component in service.json
+
+The aggregator component is referenced in the `aggregator_component` field of your service manifest alongside the existing `aggregators` submission target:
+
+```json service.json
+{
+  "workflows": {
+    "my-workflow": {
+      "trigger": { "...": "..." },
+      "component": { "...": "..." },
+      "submit": {
+        "aggregator": {
+          "url": "http://127.0.0.1:8001"
+        }
+      },
+      "aggregators": [
+        {
+          "evm": {
+            "chain_name": "local",
+            "address": "0xd6f8ff0036d8b2088107902102f9415330868109",
+            "max_gas": 5000000
+          }
+        }
+      ],
+      "aggregator_component": {
+        "source": {
+          "Registry": {
+            "registry": {
+              "digest": "...",
+              "domain": "localhost:8090",
+              "version": "0.1.0",
+              "package": "example:simple-aggregator"
+            }
+          }
+        },
+        "config": {
+          "chain": "local",
+          "service_handler": "0xd6f8ff0036d8b2088107902102f9415330868109"
+        }
+      }
+    }
+  }
+}
+```
+
+The `config` object is where you pass chain name and service handler address (and any other parameters your aggregator reads via `host::config_var`).
+
+## Using the KV store in aggregator components
+
+Aggregator components have access to the same `wasi:keyvalue` sandboxed KV store as operator components. This is useful in `handle_submit_callback` to record submission results, or in `handle_timer_callback` to track state across timer firings.
+
+```rust
+use world::wasi::keyvalue::store;
+
+fn write_result(success: bool) -> Result<(), String> {
+    let bucket = store::open("submit-result").map_err(|e| e.to_string())?;
+    bucket
+        .set("success", if success { b"true" } else { b"false" })
+        .map_err(|e| e.to_string())
+}
+```
+
+<Callout title="KV store isolation" type="info">
+
+The KV store is isolated by service — all components (operator and aggregator) within the same service share the same KV namespace. Components belonging to different services cannot access each other's KV data.
+
+</Callout>
+
+## Building the aggregator component
+
+Aggregator components are built the same way as operator components — compiled to WASM and uploaded to the registry. For example, using `wavs-cli`:
+
+```bash
+wavs-cli component upload --file target/wasm32-wasip1/release/simple_aggregator.wasm
+```
+
+After uploading, update the `aggregator_component.source.Registry.digest` in your `service.json` to the new digest printed by the upload command.
