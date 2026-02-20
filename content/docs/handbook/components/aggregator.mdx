@@ -64,7 +64,7 @@ pub enum SubmitAction {
 }
 
 pub struct EvmSubmitAction {
-    pub chain: String,           // Chain name as defined in wavs.toml
+    pub chain: String,           // Chain name as defined in wavs.toml (validated as ChainKey at runtime)
     pub address: EvmAddress,     // Target service handler contract address
     pub gas_price: Option<U128>, // Optional gas price override (in wei)
 }
@@ -182,34 +182,40 @@ The aggregator component is referenced in the `aggregator_component` field of yo
 
 ```json service.json
 {
-  "submit": {
-    "aggregator": {
-      "url": "http://127.0.0.1:8001"
-    }
-  },
-  "aggregators": [
-    {
-      "evm": {
-        "chain_name": "local",
-        "address": "0xd6f8ff0036d8b2088107902102f9415330868109",
-        "max_gas": 5000000
-      }
-    }
-  ],
-  "aggregator_component": {
-    "source": {
-      "Registry": {
-        "registry": {
-          "digest": "...",
-          "domain": "localhost:8090",
-          "version": "0.1.0",
-          "package": "example:simple-aggregator"
+  "workflows": {
+    "my-workflow": {
+      "trigger": { "...": "..." },
+      "component": { "...": "..." },
+      "submit": {
+        "aggregator": {
+          "url": "http://127.0.0.1:8001"
+        }
+      },
+      "aggregators": [
+        {
+          "evm": {
+            "chain_name": "local",
+            "address": "0xd6f8ff0036d8b2088107902102f9415330868109",
+            "max_gas": 5000000
+          }
+        }
+      ],
+      "aggregator_component": {
+        "source": {
+          "Registry": {
+            "registry": {
+              "digest": "...",
+              "domain": "localhost:8090",
+              "version": "0.1.0",
+              "package": "example:simple-aggregator"
+            }
+          }
+        },
+        "config": {
+          "chain": "local",
+          "service_handler": "0xd6f8ff0036d8b2088107902102f9415330868109"
         }
       }
-    },
-    "config": {
-      "chain": "local",
-      "service_handler": "0xd6f8ff0036d8b2088107902102f9415330868109"
     }
   }
 }
@@ -234,17 +240,16 @@ fn write_result(success: bool) -> Result<(), String> {
 
 <Callout title="KV store isolation" type="info">
 
-Each component (operator or aggregator) gets its own isolated KV bucket namespace. Data written by the aggregator component is not visible to operator components and vice versa.
+The KV store is isolated by service — all components (operator and aggregator) within the same service share the same KV namespace. Components belonging to different services cannot access each other's KV data.
 
 </Callout>
 
 ## Building the aggregator component
 
-Aggregator components are built the same way as operator components — compiled to WASM and uploaded to the registry. In the template, a separate `Makefile` target handles this:
+Aggregator components are built the same way as operator components — compiled to WASM and uploaded to the registry. For example, using `wavs-cli`:
 
 ```bash
-make build-aggregator  # Compile aggregator component to WASM
-make upload-aggregator # Upload to local registry
+wavs-cli component upload --file target/wasm32-wasip1/release/simple_aggregator.wasm
 ```
 
 After uploading, update the `aggregator_component.source.Registry.digest` in your `service.json` to the new digest printed by the upload command.

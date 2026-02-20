@@ -157,9 +157,9 @@ pub fn encode_trigger_output(trigger_id: u64, output: impl AsRef<[u8]>) -> WasmR
 
 Outputs for components are returned as a `Vec<WasmResponse>`. Returning a `Vec` allows a single trigger invocation to produce multiple on-chain submissions, each with a unique identity. The `WasmResponse` struct has three fields:
 
-- `payload`: The encoded output data (ABI-encoded bytes for on-chain submission)
-- `ordering`: Optional ordering parameter for transaction sequencing within a workflow
-- `event_id_salt`: Optional bytes that are mixed into the event ID hash. When a component returns multiple responses from one trigger, set a unique `event_id_salt` on each response so they receive distinct event IDs and can be submitted as separate on-chain transactions.
+- `payload`: The output bytes returned by your component. The outer submission envelope is ABI-encoded by the runtime, but the payload itself can be arbitrary bytes — the submission contract determines how to interpret them.
+- `ordering`: Optional ordering parameter for transaction sequencing within a workflow (not yet implemented).
+- `event_id_salt`: Optional bytes that control the aggregation ID for this response. The primary purpose is to let the component decide which responses across separate trigger firings should be aggregated together — for example, multiple cron firings that all refer to the same email or message can share an `event_id_salt` so they resolve to the same event. As an invariant, when a component returns multiple responses from a single trigger, each must have a unique `event_id_salt` so they receive distinct event IDs and are submitted as separate on-chain transactions.
 
 The `Vec<WasmResponse>` is submitted to WAVS which routes each response according to the workflow's submission logic.
 
