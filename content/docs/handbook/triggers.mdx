@@ -270,7 +270,7 @@ TriggerData::HypercoreAppend(TriggerDataHypercoreAppend {
 
 ### Raw trigger (local testing)
 
-The `Raw` variant is not a service trigger type configured in `service.json`. It is the trigger data format used when executing a component locally with `make wasi-exec` in the template. Raw bytes are passed directly to the component without any ABI decoding.
+The `Raw` variant is not a service trigger type configured in `service.json`. It is the trigger data format used when executing a component locally with `task wasi:exec` in the template. Raw bytes are passed directly to the component without any ABI decoding.
 
 ```rust
 // In trigger.rs — handle the Raw variant for local testing

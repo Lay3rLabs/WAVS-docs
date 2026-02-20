@@ -7,7 +7,7 @@ import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 
 <Callout title="Foundry template" type="info">
 
-This tutorial uses the [wavs-foundry-template](https://github.com/Lay3rLabs/wavs-foundry-template) and its Makefile-based workflow. Real-world WAVS projects may use different tooling and project structures.
+This tutorial uses the [wavs-foundry-template](https://github.com/Lay3rLabs/wavs-foundry-template) and its Taskfile-based workflow. Real-world WAVS projects may use different tooling and project structures.
 
 </Callout>
 
@@ -22,7 +22,7 @@ cp .env.example .env
 2. Use the following command to start an Anvil test chain, IPFS, Registry, and some optional telemetry. This only runs with `LOCAL` being set in the `.env` (default).
 
 ```bash docci-background docci-delay-after=5
-make start-all-local
+task -y start-all-local
 ```
 
 <Callout title="Keep WAVS running" type="info">
@@ -33,133 +33,33 @@ You can stop the services with `ctrl+c`. Some MacOS terminals require pressing t
 
 </Callout>
 
-<Callout title="Run super simple" type="info">
-
-You can skip all the setup steps below and just run a single command to deploy and run the entire service setup
-
-```bash
-export RPC_URL=`bash ./script/get-rpc.sh`
-export AGGREGATOR_URL=http://127.0.0.1:8001
-
-bash ./script/deploy-script.sh
-```
-
-This performs all the below steps (with the exception of actually triggering the contract).
-
-</Callout>
-
 With the chain running, you can deploy and run your service.
 
-## Create Deployer
+## Deploy
 
-An account is required to upload the contracts and to be the original admin of them. The `create-deployer.sh` script creates a new wallet then sets a balance if using a local deployment, or waits until it has testnet funds before returning.
+Run the following single command to automate the complete WAVS deployment process:
 
-You can skip this step by setting `FUNDED_KEY=` in `.env` to a private key of your choice that has network funds.
-
-```bash docci-delay-after=2
-bash ./script/create-deployer.sh
+```bash docci-delay-after=30
+task deploy-full
 ```
 
-## Deploy PoA Service Manager
+This handles everything end-to-end:
+- Creating a deployer account and funding it
+- Deploying the PoA service manager contract
+- Deploying the trigger and submission Solidity contracts
+- Uploading the compiled WASI component
+- Building and uploading the service manifest to IPFS
+- Starting the aggregator and registering the service with it
+- Starting WAVS and deploying the service
+- Registering operators with the service manager
 
-This deploys the [PoA service manager contract](https://github.com/Lay3rLabs/poa-middleware), which controls the operator set for your service. An owner account (the deployer by default) manages which operators are registered and their relative voting weight.
-
-```bash docci-delay-after=2
-COMMAND=deploy make poa-middleware
-```
-
-## Deploy solidity contracts
-
-The `deploy-contracts.sh` script is used to deploy the trigger and submission solidity contracts to the chain.
-
-```bash docci-delay-per-cmd=2
-source script/deploy-contracts.sh
-```
-
-## Deploy Service
-
-Deploy the compiled component with the contract information from the previous steps.
-
-```bash docci-delay-per-cmd=3
-export COMPONENT_FILENAME=evm_price_oracle.wasm
-export PKG_NAME="evmrustoracle"
-export PKG_VERSION="0.1.0"
-# ** Testnet Setup: https://wa.dev/account/credentials/new -> warg login
-source script/upload-to-wasi-registry.sh || true
-
-# Testnet: set values (default: local if not set)
-# export TRIGGER_CHAIN=holesky
-# export SUBMIT_CHAIN=holesky
-
-# Package not found with wa.dev? -- make sure it is public
-export AGGREGATOR_URL=http://127.0.0.1:8001
-REGISTRY=${REGISTRY} source ./script/build-service.sh
-```
-
-The build-service.sh script is used to create a service manifest (service.json) with the configuration for the service, including a workflow with the trigger event, component, aggregator, submission logic, and more. Visit the [Service handbook](../handbook/service) for more information on service configuration.
-
-## Upload to IPFS
-
-The `ipfs-upload.sh` script is used to upload the service manifest to IPFS where it can be referenced by its URI.
-
-```bash docci-delay-per-cmd=2
-# Upload service.json to IPFS
-SERVICE_FILE=.docker/service.json source ./script/ipfs-upload.sh
-```
-
-## Aggregator
-
-Start the [aggregator](../handbook/submission#aggregator) and register the service with the aggregator. The aggregator is used to collect and validate responses from multiple operators before submitting them to the blockchain.
-
-```bash docci-delay-per-cmd=2
-bash ./script/create-aggregator.sh 1
-
-IPFS_GATEWAY=${IPFS_GATEWAY} bash ./infra/aggregator-1/start.sh
-
-wget -q --header="Content-Type: application/json" --post-data="{\"uri\": \"${IPFS_URI}\"}" ${AGGREGATOR_URL}/register-service -O -
-```
-
-## Start WAVS
-
-Create an operator and start WAVS. The create-operator.sh script configures the operator's environment and starts running WAVS.
-
-```bash
-bash ./script/create-operator.sh 1
-
-IPFS_GATEWAY=${IPFS_GATEWAY} bash ./infra/wavs-1/start.sh
-
-# Deploy the service to WAVS so it now watches and submits.
-WAVS_ENDPOINT=http://127.0.0.1:8000 SERVICE_URL=${IPFS_URI} IPFS_GATEWAY=${IPFS_GATEWAY} make deploy-service
-```
-
-## Register service specific operator
-
-Each service gets its own key path (hd_path). The first service starts at 1 and increments from there. The following commands are used to register the operator with the [service manager contract](../handbook/service#service-manager).
-
-With PoA, the deployer (owner) registers operators and assigns a weight. No ETH stake is required.
-
-```bash
-SERVICE_INDEX=0 source ./script/avs-signing-key.sh
-
-# Local: read the PoA service manager address from the deploy output
-export WAVS_SERVICE_MANAGER_ADDRESS=$(jq -r .addresses.POAStakeRegistry ./.nodes/poa_deploy.json)
-# TESTNET: set WAVS_SERVICE_MANAGER_ADDRESS
-
-# Derive the operator's EVM address from their private key
-export OPERATOR_ADDRESS=$(cast wallet address --private-key "$OPERATOR_PRIVATE_KEY")
-
-# Register the operator (owner-managed — the deployer account signs this tx)
-COMMAND="owner_operation registerOperator ${OPERATOR_ADDRESS} 100" make poa-middleware
-
-# Set the operator's signing key (the operator signs this tx with their own key)
-COMMAND="update_signing_key ${OPERATOR_PRIVATE_KEY} ${AVS_SIGNING_ADDRESS}" make poa-middleware
-```
+When complete, a deployment summary is written to `.docker/deployment_summary.json` with the deployed contract addresses.
 
 ## Trigger the service
 
 Next, use your deployed trigger contract to trigger the oracle to be run. In the following command, you'll specify the `INPUT_DATA` as abi encoded `1`, which corresponds to the ID of Bitcoin.
 
-Running this command will execute [`/script/Trigger.s.sol`](https://github.com/Lay3rLabs/wavs-foundry-template/tree/main/script/Trigger.s.sol) and pass the ID to the trigger contract, starting the following chain of events:
+Running this command will execute [`/src/script/Trigger.s.sol`](https://github.com/Lay3rLabs/wavs-foundry-template/tree/main/src/script/Trigger.s.sol) and pass the ID to the trigger contract, starting the following chain of events:
 
 1. The trigger contract will emit an event with the specified ID as its data.
 2. Operators listening for the event will receive the data and run it in the oracle component off-chain.
@@ -168,15 +68,16 @@ Running this command will execute [`/script/Trigger.s.sol`](https://github.com/L
 
 
 ```bash docci-delay-per-cmd=2
-# Request BTC from CMC
+# Get the trigger address from the deployment summary
+export SERVICE_TRIGGER_ADDR=`jq -r '.evmpriceoracle_trigger.deployedTo' .docker/deployment_summary.json`
+
+export RPC_URL=`task get-rpc`
+export FUNDED_KEY=`task config:funded-key`
+
+# Request BTC price from CoinMarketCap (ID=1)
 export INPUT_DATA=`cast abi-encode "addTrigger(string)" "1"`
-# Get the trigger address from previous Deploy forge script
-export SERVICE_TRIGGER_ADDR=`make get-trigger-from-deploy`
 
-# uses FUNDED_KEY as the executor (local: anvil account)
-source .env
-
-forge script ./script/Trigger.s.sol ${SERVICE_TRIGGER_ADDR} ${INPUT_DATA} --sig 'run(string,string)' --rpc-url ${RPC_URL} --broadcast
+forge script ./src/script/Trigger.s.sol ${SERVICE_TRIGGER_ADDR} ${INPUT_DATA} --sig 'run(string,string)' --rpc-url ${RPC_URL} --broadcast --private-key ${FUNDED_KEY}
 ```
 
 ## Show the result
@@ -184,8 +85,8 @@ forge script ./script/Trigger.s.sol ${SERVICE_TRIGGER_ADDR} ${INPUT_DATA} --sig 
 Run the following to view the result of your service in your terminal:
 
 ```bash docci-delay-per-cmd=2 docci-output-contains="BTC"
-# Get the latest TriggerId and show the result via `script/ShowResult.s.sol`
-TRIGGER_ID=1 RPC_URL=${RPC_URL} make show-result
+export SERVICE_SUBMIT_ADDR=`jq -r '.evmpriceoracle_submit.deployedTo' .docker/deployment_summary.json`
+RPC_URL=${RPC_URL} forge script ./src/script/ShowResult.s.sol ${SERVICE_SUBMIT_ADDR} 1 --sig 'data(string,uint64)' --rpc-url ${RPC_URL}
 ```
 
 Congratulations, you've just made a simple Bitcoin price oracle service using WAVS!

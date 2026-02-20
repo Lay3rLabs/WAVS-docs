@@ -130,23 +130,21 @@ This example utilizes the OpenAI API with a [seed](https://platform.openai.com/d
 
 5. The agent will start by planning its component and will create a `plan.md` file. The agent will then make a new component and files according to this plan.
 
-6. The agent will test its component for errors by running validation tests using `make validate-component COMPONENT=your-component`.
+6. The agent will test its component for errors by running validation tests using `task validate-component COMPONENT=your-component`.
 
-7. The agent may need to make changes after running the Validation tests. After making changes, the agent will build the component using `WASI_BUILD_DIR=components/my-component make wasi-build`.
+7. The agent may need to make changes after running the Validation tests. After making changes, the agent will build the component using `WASI_BUILD_DIR=components/my-component task -y build:wasi`.
 
 8. After successfully building your component, it's time to test it. The following command can be used to test your component logic without deploying WAVS. Make sure to replace the placeholders with the correct inputs.
 
 ```sh
 # Run this command to build the component:
-WASI_BUILD_DIR=components/openai-response make wasi-build
+WASI_BUILD_DIR=components/openai-response task -y build:wasi
 
 # Once built, test it with:
-export COMPONENT_FILENAME=openai_response.wasm
-export INPUT_DATA="Only respond with yes or no: Is AI beneficial to the world?"
-make wasi-exec
+INPUT_DATA="Only respond with yes or no: Is AI beneficial to the world?" COMPONENT_FILENAME=openai_response.wasm task wasi:exec
 ```
 
-The agent may try to run the `make wasi-exec` command themselves. You should prompt the agent to give you the command instead, as it can't run the command without permissions.
+The agent may try to run the `task wasi:exec` command themselves. You should prompt the agent to give you the command instead, as it can't run the command without permissions.
 
 
 9. Your component should execute and return a response. If there are any errors, share them with the agent for troubleshooting.
@@ -180,5 +178,5 @@ When creating a prompt, consider the following:
 - You can ask the agent to fix errors it may not be able to catch when executing components. Make sure to give the agent full context of the error.
 - LLMs can be unpredictable. Minimal prompts provide a lot of room for creativity/error. If the agent is not able to fix an error after trying, sometimes deleting the component, clearing the history, and starting fresh can help.
 - The agent may try to edit the bindings.rs file to "fix" it. The agent never needs to do this, and you should tell the agent to not do this.
-- The agent is supposed to provide you with the `make wasi-exec` command. Sometimes it will try to run this itself and it will fail. Instead, ask it to give you the command.
-- When copying and pasting the full `make wasi-exec` command, be careful with line breaks. You may need to reformat long lines to avoid breaking the command.
+- The agent is supposed to provide you with the `task wasi:exec` command. Sometimes it will try to run this itself and it will fail. Instead, ask it to give you the command.
+- When copying and pasting the full `task wasi:exec` command, be careful with line breaks. You may need to reformat long lines to avoid breaking the command.

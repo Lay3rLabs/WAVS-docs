@@ -23,16 +23,16 @@ The following dependencies are commonly required in your component's `Cargo.toml
 [dependencies]
 # Core WAVS blockchain functionality
 wit-bindgen-rt = { workspace = true, features = ["bitflags"] }  # Required for WASI bindings
-wavs-wasi-utils = "0.4.0"                                # Blockchain interaction utilities
-wstd = "0.5.3"                                                  # WASI standard library
+wavs-wasi-utils = "1.0.0"                                # Blockchain interaction utilities
+wstd = "0.5.4"                                                  # WASI standard library
 
 # Alloy crates for Ethereum interaction
 alloy-sol-macro = { version = "1.0.0", features = ["json"] }    # sol! macro for interfaces
 alloy-sol-types = "1.0.0"                                       # ABI handling & type generation
-alloy-network = "0.15.10"                                       # Network trait and Ethereum network type
-alloy-provider = { version = "0.15.10", default-features = false, features = ["rpc-api"] }  # RPC provider
-alloy-rpc-types = "0.15.10"                                     # RPC type definitions
-alloy-contract = "0.15.10"                                      # Contract interaction utilities
+alloy-network = "1.0.0"                                         # Network trait and Ethereum network type
+alloy-provider = { version = "1.0.0", default-features = false, features = ["rpc-api"] }  # RPC provider
+alloy-rpc-types = "1.0.0"                                       # RPC type definitions
+alloy-contract = "1.0.0"                                        # Contract interaction utilities
 
 # Other useful crates
 anyhow = "1.0.98"                                              # Error handling
@@ -152,22 +152,21 @@ Here's an [example](https://github.com/Lay3rLabs/wavs-art/blob/main/components/a
 use crate::bindings::host::get_evm_chain_config;  // WAVS host binding to get chain configuration
 use alloy_network::Ethereum;                      // Ethereum network type
 use alloy_provider::RootProvider;                 // Provider for making RPC calls
-use alloy_sol_types::sol;                         // Macro for generating Solidity bindings
+use alloy_sol_macro::sol;                         // Macro for generating Solidity bindings
 use wavs_wasi_utils::evm::{                      // WAVS utilities for EVM interaction
     alloy_primitives::{Address, U256},           // Ethereum primitive types
     new_evm_provider,                            // Function to create EVM provider
 };
-use alloy_rpc_types::TransactionInput;
 use wstd::runtime::block_on;                      // Utility to run async code in sync context
 
-// Define the ERC721 interface using the sol! macro
-// This generates Rust types and functions for interacting with the contract
+// Define the ERC721 interface using the sol! macro with #[sol(rpc)] for contract bindings
 sol! {
+    #[sol(rpc)]
     interface IERC721 {
-        // Define the balanceOf function that returns how many NFTs an address owns
         function balanceOf(address owner) external view returns (uint256);
     }
 }
+
 // Function to check if an address owns any NFTs from a specific contract
 pub fn query_nft_ownership(address: Address, nft_contract: Address) -> Result<bool, String> {
     // block_on allows us to run async code in a synchronous function
@@ -179,21 +178,13 @@ pub fn query_nft_ownership(address: Address, nft_contract: Address) -> Result<bo
             chain_config.http_endpoint.unwrap()
         );
 
-        // Create a contract instance using the generated IERC721 interface
-        let balance_call = IERC721::balanceOf { owner: address };
+        // Create a contract instance bound to the provider
+        let contract = IERC721::new(nft_contract, &provider);
 
-        let tx = alloy_rpc_types::eth::TransactionRequest {
-            to: Some(TxKind::Call(nft_contract)),
-            input: TransactionInput { input: Some(balance_call.abi_encode().into()), data: None },
-            ..Default::default()
-        };
+        // Call balanceOf as a view call (no state changes, no gas)
+        let balance: U256 = contract.balanceOf(address).call().await.map_err(|e| e.to_string())?;
 
-        // Call the balanceOf function on the contract
-        // .call() executes the function as a view call (no state changes)
-        let result = provider.call(tx).await.map_err(|e| e.to_string())?;
-
-        // Return true if the address owns at least one NFT (balance > 0)
-        let balance: U256 = U256::from_be_slice(&result);
+        // Return true if the address owns at least one NFT
         Ok(balance > U256::ZERO)
     })
 }
