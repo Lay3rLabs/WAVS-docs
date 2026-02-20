@@ -11,7 +11,7 @@ As of WAVS v1.0.0, services that submit results on-chain must include a custom *
 | | Operator component | Aggregator component |
 |---|---|---|
 | **Macro** | `export_layer_trigger_world!` | `export_aggregator_world!` |
-| **Entry point** | `fn run(action: TriggerAction) -> Result<Vec<WasmResponse>, String>` | Three callbacks (see below) |
+| **Entry point** | `fn run(action: TriggerAction) -> Result<Option<WasmResponse>, String>` | Three callbacks (see below) |
 | **Runs on** | Every registered operator node | The aggregator service |
 | **Purpose** | Execute business logic, produce a signed result | Decide when/where to submit the collected results |
 
