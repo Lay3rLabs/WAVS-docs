@@ -5,6 +5,11 @@ description: CLI commands for WAVS development
 import { Callout } from 'fumadocs-ui/components/callout';
 import { DocsPage } from 'fumadocs-ui/page';
 
+The `Taskfile.yml` in the template composes commands from two sources:
+
+- **Project-specific taskfiles** in `./taskfile/` — build, deploy, and service tasks customized for the template
+- **Shared base taskfiles** from [Lay3rLabs/wavs-taskfiles](https://github.com/Lay3rLabs/wavs-taskfiles) — common operator, docker, WASI, and core tasks reused across WAVS projects
+
 ## Commands
 
 Use `task help` (or `task --list-all`) to see all the commands:
