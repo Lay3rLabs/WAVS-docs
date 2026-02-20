@@ -33,14 +33,14 @@ The template already contains the necessary files for the oracle example to run.
 
 In [`/evm-price-oracle/src/lib.rs`](https://github.com/Lay3rLabs/wavs-foundry-template/tree/main/components/evm-price-oracle/src/lib.rs) you'll find the oracle service component.
 
-This template uses a [`Makefile`](https://github.com/Lay3rLabs/wavs-foundry-template/tree/main/Makefile) and environment variables to help with your developer experience. If you are ever curious about one of the `Make` commands in the following sections, you can always look at the [`Makefile`](https://github.com/Lay3rLabs/wavs-foundry-template/tree/main/Makefile) to learn more.
+This template uses a [`Taskfile.yml`](https://github.com/Lay3rLabs/wavs-foundry-template/tree/main/Taskfile.yml) and environment variables to help with your developer experience. If you are ever curious about one of the `task` commands in the following sections, you can always look at the [`Taskfile.yml`](https://github.com/Lay3rLabs/wavs-foundry-template/tree/main/Taskfile.yml) to learn more.
 
 <Callout title="Info" type="info">
 
 You can run the following command from the root of the repo to see all of the commands and environment variable overrides available:
 
 ```bash docci-ignore
-make help
+task help
 ```
 
 </Callout>
@@ -54,7 +54,7 @@ Run the following commands from the root of your project to install necessary de
 
 ```bash
 # Install dependencies
-make setup
+task setup
 
 # Build the contracts
 forge build

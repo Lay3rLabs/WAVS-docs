@@ -1,5 +1,5 @@
 ---
-title: Makefile commands
+title: Task commands
 description: CLI commands for WAVS development
 ---
 import { Callout } from 'fumadocs-ui/components/callout';
@@ -7,36 +7,35 @@ import { DocsPage } from 'fumadocs-ui/page';
 
 ## Commands
 
-Use `make help` to see all the commands:
+Use `task help` (or `task --list-all`) to see all the commands:
 
 ```bash
-make help
+task help
 ```
 
-Here are the available `make` commands and their descriptions:
+Here are the available `task` commands and their descriptions:
 
 ```bash
-build                     building the project
-wasi-build                building WAVS wasi components | WASI_BUILD_DIR
-wasi-exec                 executing the WAVS wasi component(s) with ABI function | COMPONENT_FILENAME, INPUT_DATA
-wasi-exec-fixed           the same as wasi-exec, except uses a fixed input as bytes (used in Go & TS components) | COMPONENT_FILENAME, INPUT_DATA
-clean                     cleaning the project files
-clean-docker              remove unused docker containers
-validate-component        validate a WAVS component against best practices
-fmt                       formatting solidity and rust code
-test                      running tests
+help                      show available tasks
 setup                     install initial dependencies
-start-all-local           starting anvil and core services (like IPFS for example)
-get-trigger-from-deploy   getting the trigger address from the script deploy
-get-submit-from-deploy    getting the submit address from the script deploy
-wavs-cli                  running wavs-cli in docker
-upload-component          uploading the WAVS component | COMPONENT_FILENAME, WAVS_ENDPOINT
-deploy-service            deploying the WAVS component service json | SERVICE_URL, CREDENTIAL, WAVS_ENDPOINT
-get-trigger               get the trigger id | SERVICE_TRIGGER_ADDR, RPC_URL
-show-result               showing the result | SERVICE_SUBMISSION_ADDR, TRIGGER_ID, RPC_URL
-upload-to-ipfs            uploading the a service config to IPFS | SERVICE_FILE, [PINATA_API_KEY]
-update-submodules         update the git submodules
-check-requirements        verify system requirements are installed
+start-all-local           start all local services (anvil, IPFS, WARG, Jaeger, prometheus)
+deploy-full               run complete WAVS deployment pipeline
+build:all                 build everything (Solidity + WASI components)
+build:forge               build Solidity contracts
+build:wasi                build WASI components (all or specific one) | WASI_BUILD_DIR
+wasi:exec                 execute the WAVS wasi component(s) | COMPONENT_FILENAME, INPUT_DATA
+deploy:service            deploy WAVS service from URL | SERVICE_URL, WAVS_ENDPOINT
+deploy:ipfs               upload service config to IPFS | SERVICE_FILE
+deploy:component          upload WASI component to WAVS endpoint | COMPONENT_FILENAME, WAVS_ENDPOINT
+operator:register         register an operator with WAVS Service Manager
+operator:update-signing-key  update operator's signing key with WAVS Service Manager
+operator:verify           verify operator registration status
+get-trigger-from-deploy   get the trigger address from the script deploy
+get-submit-from-deploy    get the submit address from the script deploy
+show-result               show the result | SERVICE_SUBMISSION_ADDR, TRIGGER_ID, RPC_URL
+test                      run tests
+lint:check                check linting and formatting
+lint:fix                  fix linting and formatting issues
 ```
 
 For more information on commands when using the template, visit the [WAVS tutorial](/tutorial/1-overview).

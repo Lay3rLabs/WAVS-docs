@@ -7,7 +7,7 @@ import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 
 <Callout title="Foundry template" type="info">
 
-This tutorial uses the [wavs-foundry-template](https://github.com/Lay3rLabs/wavs-foundry-template) and its Makefile-based workflow. Real-world WAVS projects may use different tooling and project structures.
+This tutorial uses the [wavs-foundry-template](https://github.com/Lay3rLabs/wavs-foundry-template) and its Taskfile-based workflow. Real-world WAVS projects may use different tooling and project structures.
 
 </Callout>
 
@@ -22,7 +22,7 @@ cp .env.example .env
 2. Use the following command to start an Anvil test chain, IPFS, Registry, and some optional telemetry. This only runs with `LOCAL` being set in the `.env` (default).
 
 ```bash docci-background docci-delay-after=5
-make start-all-local
+task start-all-local
 ```
 
 <Callout title="Keep WAVS running" type="info">
@@ -65,7 +65,7 @@ bash ./script/create-deployer.sh
 This deploys the [PoA service manager contract](https://github.com/Lay3rLabs/poa-middleware), which controls the operator set for your service. An owner account (the deployer by default) manages which operators are registered and their relative voting weight.
 
 ```bash docci-delay-after=2
-COMMAND=deploy make poa-middleware
+COMMAND=deploy task operator:deploy
 ```
 
 ## Deploy solidity contracts
@@ -129,7 +129,7 @@ bash ./script/create-operator.sh 1
 IPFS_GATEWAY=${IPFS_GATEWAY} bash ./infra/wavs-1/start.sh
 
 # Deploy the service to WAVS so it now watches and submits.
-WAVS_ENDPOINT=http://127.0.0.1:8000 SERVICE_URL=${IPFS_URI} IPFS_GATEWAY=${IPFS_GATEWAY} make deploy-service
+WAVS_ENDPOINT=http://127.0.0.1:8000 SERVICE_URL=${IPFS_URI} IPFS_GATEWAY=${IPFS_GATEWAY} task deploy:service
 ```
 
 ## Register service specific operator
@@ -149,10 +149,10 @@ export WAVS_SERVICE_MANAGER_ADDRESS=$(jq -r .addresses.POAStakeRegistry ./.nodes
 export OPERATOR_ADDRESS=$(cast wallet address --private-key "$OPERATOR_PRIVATE_KEY")
 
 # Register the operator (owner-managed — the deployer account signs this tx)
-COMMAND="owner_operation registerOperator ${OPERATOR_ADDRESS} 100" make poa-middleware
+OPERATOR_ADDRESS=${OPERATOR_ADDRESS} task operator:register
 
 # Set the operator's signing key (the operator signs this tx with their own key)
-COMMAND="update_signing_key ${OPERATOR_PRIVATE_KEY} ${AVS_SIGNING_ADDRESS}" make poa-middleware
+OPERATOR_PRIVATE_KEY=${OPERATOR_PRIVATE_KEY} AVS_SIGNING_ADDRESS=${AVS_SIGNING_ADDRESS} task operator:update-signing-key
 ```
 
 ## Trigger the service
@@ -171,7 +171,7 @@ Running this command will execute [`/script/Trigger.s.sol`](https://github.com/L
 # Request BTC from CMC
 export INPUT_DATA=`cast abi-encode "addTrigger(string)" "1"`
 # Get the trigger address from previous Deploy forge script
-export SERVICE_TRIGGER_ADDR=`make get-trigger-from-deploy`
+export SERVICE_TRIGGER_ADDR=`task get-trigger-from-deploy`
 
 # uses FUNDED_KEY as the executor (local: anvil account)
 source .env
@@ -185,7 +185,7 @@ Run the following to view the result of your service in your terminal:
 
 ```bash docci-delay-per-cmd=2 docci-output-contains="BTC"
 # Get the latest TriggerId and show the result via `script/ShowResult.s.sol`
-TRIGGER_ID=1 RPC_URL=${RPC_URL} make show-result
+TRIGGER_ID=1 RPC_URL=${RPC_URL} task show-result
 ```
 
 Congratulations, you've just made a simple Bitcoin price oracle service using WAVS!

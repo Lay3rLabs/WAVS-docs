@@ -34,7 +34,7 @@ warg key new
 Run the following command in your terminal to build your component. Exclude `WASI_BUILD_DIR` to build all components.
 
 ```bash docci-if-file-not-exists="./compiled/evm_price_oracle.wasm"
-WASI_BUILD_DIR=components/evm-price-oracle make wasi-build
+WASI_BUILD_DIR=components/evm-price-oracle task build:wasi
 ```
 
 This command will build any components present in the `/components` directory, as well as auto-generate bindings and compile the components to WASM. The output will be placed in the `compiled` directory.
@@ -44,7 +44,7 @@ You can also use the command below to build your solidity contracts and componen
 
 
 ```bash docci-if-file-not-exists="./compiled/evm_price_oracle.wasm"
-make build
+task build:all
 ```
 
 </Callout>
@@ -57,7 +57,7 @@ An ID of 1 is Bitcoin. Nothing will be saved on-chain, just the output of the co
 
 
 ```bash
-make wasi-exec
+INPUT_DATA="1" COMPONENT_FILENAME=evm_price_oracle.wasm task wasi:exec
 ```
 
 This command runs your component locally in a simulated environment and lets you easily view `print` statements for debugging. Running this command in the oracle example will print the information from the oracle [component code](./4-component). Visit the [component walkthrough](../handbook/components/component#logging-in-a-component) for more information on logging during testing and production.
@@ -81,7 +81,7 @@ Result (utf8):
 
 In the output above, the `INFO Fuel used` value represents the computational power consumed during execution. Similar to how on-chain transactions have a gas limit to cap transaction costs, WAVS enforces a fuel limit to control off-chain computational workload and protect against DoS attacks.
 
-The maximum fuel allocation can be adjusted in the `Makefile` to accommodate different processing needs.
+The maximum fuel allocation can be adjusted in the `Taskfile` to accommodate different processing needs.
 
 </Callout>
 
