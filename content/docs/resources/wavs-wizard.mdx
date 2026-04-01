@@ -45,16 +45,16 @@ Start with your verification target. Currently supports EVM and Cosmos.
 
 ### Operator Component
 
-...
+The operator component is the WASM module that runs when a trigger fires. It processes the incoming event and produces a signed response. Configure the component source, permissions (HTTP, filesystem), and execution constraints like fuel and time limits.
 
 ### Aggregator
 
-...
+The aggregator collects signed responses from operators after quorum is reached. It's also a WASM component and decides what to do next - submit results on-chain immediately or defer via a timer callback.
 
 ### Service Handler
 
-...
+The service handler is the on-chain contract that receives the final submission. On EVM this implements the IWavsServiceHandler interface; on Cosmos it's a CosmWasm contract. This is where your verification logic lives.
 
 ### Component Meta
 
-...
+Component Meta lets you attach configuration key-values and environment variable keys to your operator or aggregator components. These are passed into the WASM runtime at execution time.
