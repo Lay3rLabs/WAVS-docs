@@ -1,6 +1,8 @@
 {
     "title": "Resources",
     "pages": [
+        "wavs-dashboard",
+        "wavs-wizard",
         "llms",
         "[Awesome-WAVS](https://github.com/Lay3rLabs/awesome-WAVS)",
         "[WAVS Foundry Template](https://github.com/Lay3rLabs/wavs-foundry-template)",
