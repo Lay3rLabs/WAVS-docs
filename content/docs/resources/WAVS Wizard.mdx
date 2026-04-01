@@ -1,0 +1,60 @@
+---
+title: WAVS Wizard
+description: A visual drag-and-drop tool for composing and experimenting with WAVS event-driven workflows.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+WAVS Wizard is a visualization tool for building WAVS verifiable services and composing event-driven workflows. It provides a graphical drag-and-drop interface for an "infrastructure Legos" experience. Components easily lock into place for developers to understand the structure of a WAVS verifiable service.
+
+<Callout title="Demo tool only" type="warning">
+  WAVS Wizard is intended for visualization and experimentation only. It is not for developing production applications.
+</Callout>
+
+![WAVS Wizard interface](/diagrams/WAVS%20Wizard%20Demo.png)
+
+After configuring your WAVS verifiable service event-driven workflows with WAVS Wizard, you can view your WAVS service manifest JSON configuration. You can copy this to deploy and experiment with your WAVS service, or click "Generate Project" to download a compressed file of the project.
+
+<Callout title="Tip" type="info">
+  Share your WAVS Wizard workflow by pressing "Copy Permalink", your configuration is embedded in the link and can be easily shared but warning: it's a long link.
+</Callout>
+ 
+## Components
+
+WAVS Wizard is composed of color-coded components on the left side, along with essential non-deletable Service & Target functions.
+
+### Service
+
+Start with the Service component as the foundation of your workflow.
+
+### Middleware
+
+Select your security middleware — EigenLayer restaking, PoA, or mirroring a Cosmos chain — then attach it to your Service component.
+
+### Workflows
+
+Add the Workflow component and configure it with your trigger, operator, and aggregator components.
+
+### Event-Driven Trigger
+
+Supports onchain Cosmos or EVM contracts, block times, or cron schedule. Add your selected trigger component into the trigger indent in the Workflow component.
+
+### Target
+
+Start with your verification target. Currently supports EVM and Cosmos.
+
+### Operator Component
+
+...
+
+### Aggregator
+
+...
+
+### Service Handler
+
+...
+
+### Component Meta
+
+...
