@@ -1,0 +1,45 @@
+---
+title: WAVS App
+description: A dashboard interface for running, managing, and monitoring WAVS nodes and verifiable services.
+---
+import { Callout } from 'fumadocs-ui/components/callout';
+
+The WAVS App provides a dashboard interface for running and managing WAVS nodes. Operating a node or verifiable service typically requires watching logs, managing CLI commands, and manually coordinating execution across triggers, components, and submissions. The WAVS App consolidates this into a unified interface, improving visibility and reducing operational overhead.
+
+![WAVS App interface](/diagrams/WAVSapp.png)
+
+## Service Management
+
+Services can be created and managed through a guided interface that walks through contract selection, trigger configuration, component setup, and deployment.
+
+Operators can define triggers across:
+- EVM and Cosmos contract events
+- Block intervals
+- Cron schedules
+- Manual execution
+
+WASM components can be assigned with specific permissions — HTTP, file system, raw sockets, DNS — along with execution constraints such as fuel and time limits. Services can be paused, resumed, or removed at any time.
+
+## Monitoring
+
+The WAVS App introduces a consolidated monitoring experience:
+
+- **Activity feed** — a single view of triggers, operator responses, and submissions as they occur
+- **Log viewer** — supports filtering, search, and high-volume output
+- **System health** — visibility into chain connectivity and node status
+
+This reduces the need to rely on external tooling during development and testing.
+
+## Wallet & Network Management
+
+Wallet and network configuration are handled directly within the App. Operators can:
+
+- Configure mnemonic-based wallets stored securely in the OS keychain
+- Track balances across supported networks
+- Add custom EVM or Cosmos chains
+
+This simplifies coordination when running multiple services or managing operator infrastructure.
+
+## AI Tooling
+
+The WAVS App includes MCP server support, enabling connections to AI systems like Claude or Codex for assisted component development and service configuration. This makes it easier to observe, configure, and operate WAVS services without relying entirely on CLI-based workflows.
