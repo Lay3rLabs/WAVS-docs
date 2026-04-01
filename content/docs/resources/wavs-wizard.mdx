@@ -1,0 +1,60 @@
+---
+title: WAVS Wizard
+description: A visual drag-and-drop tool for composing and experimenting with WAVS event-driven workflows.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+WAVS Wizard is a visualization tool for building WAVS verifiable services and composing event-driven workflows. It provides a graphical drag-and-drop interface for an "infrastructure Legos" experience. Components easily lock into place for developers to understand the structure of a WAVS verifiable service.
+
+<Callout title="Demo tool only" type="warning">
+  WAVS Wizard is intended for visualization and experimentation only. It is not for developing production applications.
+</Callout>
+
+<img alt="WAVS Wizard interface" src="/diagrams/WAVS%20Wizard%20Demo.png" />
+
+After configuring your WAVS verifiable service event-driven workflows with WAVS Wizard, you can view your WAVS service manifest JSON configuration. You can copy this to deploy and experiment with your WAVS service, or click "Generate Project" to download a compressed file of the project.
+
+<Callout title="Tip" type="info">
+  Share your WAVS Wizard workflow by pressing "Copy Permalink", your configuration is embedded in the link and can be easily shared but warning: it's a long link.
+</Callout>
+ 
+## Components
+
+WAVS Wizard is composed of color-coded components on the left side, along with essential non-deletable Service & Target functions.
+
+### Service
+
+Start with the Service component as the foundation of your workflow.
+
+### Middleware
+
+Select your security middleware — EigenLayer restaking, PoA, or mirroring a Cosmos chain — then attach it to your Service component.
+
+### Workflows
+
+Add the Workflow component and configure it with your trigger, operator, and aggregator components.
+
+### Event-Driven Trigger
+
+Supports onchain Cosmos or EVM contracts, block times, or cron schedule. Add your selected trigger component into the trigger indent in the Workflow component.
+
+### Target
+
+Start with your verification target. Currently supports EVM and Cosmos.
+
+### Operator Component
+
+The operator component is the WASM module that runs when a trigger fires. It processes the incoming event and produces a signed response. Configure the component source, permissions (HTTP, filesystem), and execution constraints like fuel and time limits.
+
+### Aggregator
+
+The aggregator collects signed responses from operators after quorum is reached. It's also a WASM component and decides what to do next - submit results on-chain immediately or defer via a timer callback.
+
+### Service Handler
+
+The service handler is the on-chain contract that receives the final submission. On EVM this implements the IWavsServiceHandler interface; on Cosmos it's a CosmWasm contract. This is where your verification logic lives.
+
+### Component Meta
+
+Component Meta lets you attach configuration key-values and environment variable keys to your operator or aggregator components. These are passed into the WASM runtime at execution time.
